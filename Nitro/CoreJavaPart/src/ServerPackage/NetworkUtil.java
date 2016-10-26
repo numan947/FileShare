@@ -44,22 +44,27 @@ public class NetworkUtil {
         }
         return 0;
     }
-    public void writeBuff(byte[]buff){
+    public void writeBuff(byte[]buff,int offset,int length){
         try{
-            os.write(buff);
+            os.write(buff,offset,length);
             os.flush();
         } catch (IOException e) {
             System.out.println("Exception In ServerPackage.NetworkUtil.writeBuff "+e.getMessage());
         }
     }
 
+    public void writeBuff(byte[]buff){
+        try{
+            os.write(buff);
+            os.flush();
+        } catch (IOException e) {
+            System.out.println("Exception In ClientPackage.NetworkUtil.writeBuff "+e.getMessage());
+        }
+    }
+
     public void closeAll()
     {
         try {
-            is.close();
-            os.close();
-            socket.getInputStream().close();
-            socket.getOutputStream().close();
             socket.close();
         } catch (IOException e) {
             System.out.println("Exception In ServerPackage.NetworkUtil.closeAll "+e.getMessage());

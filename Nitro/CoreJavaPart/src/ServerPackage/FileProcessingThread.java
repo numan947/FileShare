@@ -17,7 +17,8 @@ public class FileProcessingThread implements Runnable {
     //file transfer related
     private String DEFAULT_SAVE_FILE_PATH="/home/numan947/MyHome/Important/JAVA/testsForNitro";
     private String saveFilePath=null;
-    private String fileNames=null;
+    private String fileName=null;
+    private int fileSize;
     private BufferedOutputStream fbuff=null;
     private byte[]buff=null;
     private char separator=File.separatorChar;
@@ -34,10 +35,10 @@ public class FileProcessingThread implements Runnable {
         thread.start();
     }
 
-    private void writeToFile(byte[]b)
+    private void writeToFile(byte[] b, int totalRead)
     {
         try {
-            fbuff.write(b);
+            fbuff.write(b,0,totalRead);
         } catch (IOException e) {
             System.out.println("Exception In ServerPackage.FileProcessingThread.writeToFile "+e.getMessage());
         }
@@ -46,33 +47,43 @@ public class FileProcessingThread implements Runnable {
 
     @Override
     public void run() {
+        int totalRead;
         try {
             util.writeBuff("requesting total file numbers...".getBytes(encoding));
-            util.readBuff(buff);//buff has total number of files
-            System.out.println(new String(buff,encoding));
-            int totalFiles=Integer.parseInt(new String(buff,encoding));
-            /*util.writeBuff(("Will recieve "+totalFiles+" files").getBytes(encoding));
+            totalRead=util.readBuff(buff);//buff has total number of files
+            System.out.println(new String(buff,0,totalRead,encoding));
+            int totalFiles=Integer.parseInt(new String(buff,0,totalRead,encoding));
+            util.writeBuff(("Will recieve "+totalFiles+" file(s)").getBytes(encoding));
             for(int i=0;i<totalFiles;i++){
-                util.readBuff(buff);
-                String[]s=(new String(buff,encoding)).split("\\$\\$\\$\\$");
-                util.writeBuff(("recieved name "+s[0]+" "+s[1]).getBytes(encoding));
-                fbuff=new BufferedOutputStream(new FileOutputStream(DEFAULT_SAVE_FILE_PATH+separator+s[0]));
+                totalRead=util.readBuff(buff);
+                getFileNameAndSize(buff,totalRead);
+                util.writeBuff(("recieved name "+fileName+" "+fileSize).getBytes(encoding));
+                fbuff=new BufferedOutputStream(new FileOutputStream(DEFAULT_SAVE_FILE_PATH+separator+fileName));
                 int cnt=0;
 
                 while(true){
-                    int cc=util.readBuff(buff);
-                    if((new String(buff,encoding)).equals("$$$$"))break;
-                    cnt+=cc;
-                    writeToFile(buff);
-                }
-                if(cnt!=Integer.parseInt(s[1])){
-                    System.out.println("File "+i+" has probably been corrupted");
+                    if(cnt>=fileSize)break;
+                    totalRead=util.readBuff(buff);
+                    cnt+=totalRead;
+                    writeToFile(buff,totalRead);
+                    System.out.println(fileSize+"  "+totalRead);
                 }
                 util.writeBuff(("File "+(i+1)+" recieved "+cnt+" bytes").getBytes(encoding));
-            }*/
-        } catch (UnsupportedEncodingException e) {
+            }
+
+        } catch (UnsupportedEncodingException | FileNotFoundException e) {
             System.out.println("Exception In ServerPackage.FileProcessingThread.run "+e.getMessage());
         }
 
+    }
+
+    private void getFileNameAndSize(byte[] buff,int totalRead) {
+        try {
+            String[]s=(new String(buff,0,totalRead,encoding)).split("\\$\\$\\$\\$");
+            this.fileName=s[0];
+            this.fileSize = Integer.parseInt(s[1]);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -63,51 +63,63 @@ public class Client {
 
     public void processAndSend()
     {
+        int totalRead;
         try {
             this.generateNames();
 
             //how many file to send and response from server
-            util.readBuff(buff);
-            System.out.println(new String(buff));
-            util.writeBuff(("" + fileAddresses.length).getBytes());
-            util.readBuff(buff);
-            System.out.println(new String(buff));
+            totalRead=util.readBuff(buff);
+            if(totalRead!=-1) {
+                System.out.println(new String(buff, 0, totalRead, encoding));
 
-            for (int i = 0; i < fileAddresses.length; i++) {
-                try {
-                    System.out.println("Sending File " + (i + 1) + "...");
-                    selectedFile = new File(fileAddresses[i]);
-                    fbuff = new BufferedInputStream(new FileInputStream(selectedFile));
+                util.writeBuff(("" + fileAddresses.length).getBytes(encoding));
+                totalRead = util.readBuff(buff);
 
-                    //send file name & size
-                    util.writeBuff((fileNames[i] + "$$$$" + selectedFile.length()).getBytes(encoding));
+                if (totalRead != -1) {
+                    System.out.println(new String(buff, 0, totalRead, encoding));
 
-                    //response from server
-                    util.readBuff(buff);
-                    String msg = new String(buff);
-                    System.out.println(msg);
+                    for (int i = 0; i < fileAddresses.length; i++) {
+                        try {
+                            System.out.println("Sending File " + (i + 1) + "...");
+                            selectedFile = new File(fileAddresses[i]);
+                            fbuff = new BufferedInputStream(new FileInputStream(selectedFile));
 
-                    while (getBuff(buff) > -1) {
-                        util.writeBuff(buff);
+                            //send file name & size
+                            util.writeBuff((fileNames[i] + "$$$$" + selectedFile.length()).getBytes(encoding));
+
+                            //response from server
+                            totalRead = util.readBuff(buff);
+                            if (totalRead != -1) {
+                                String msg = new String(buff, 0, totalRead, encoding);
+
+                                System.out.println(msg);
+
+                                while ((totalRead = getBuff(buff)) > -1) {
+                                    util.writeBuff(buff, 0, totalRead);
+                                }
+                                //util.writeBuff("$$$$".getBytes(encoding));
+
+                                //response from server
+                                totalRead = util.readBuff(buff);
+                                if (totalRead != -1) {
+                                    msg = new String(buff, 0, totalRead, encoding);
+
+                                    System.out.println(msg);
+
+                                    System.out.println("File " + i + " sent in stream");
+                                }
+                            }
+                        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                            System.out.println("Exception In ClientPackage.Client.processAndSend, iteration: " + i + " " + e.getMessage());
+                        }
                     }
-                    util.writeBuff("$$$$".getBytes());
-
-                    //response from server
-                    util.readBuff(buff);
-                    msg = new String(buff);
-                    System.out.println(msg);
-
-                    System.out.println("File " + i + " sent in stream");
-                } catch (FileNotFoundException | UnsupportedEncodingException e) {
-                    System.out.println("Exception In ClientPackage.Client.processAndSend, iteration: " + i + " " + e.getMessage());
                 }
+                totalRead = util.readBuff(buff);
+                if (totalRead != -1) System.out.println(new String(buff, 0, totalRead, encoding));
             }
-            util.readBuff(buff);
-            System.out.println(new String(buff));
-        } catch (UnsupportedEncodingException e) {
-            System.out.println("Exception In ClientPackage.Client.processAndSend "+e.getMessage());
+        } catch (Exception ee) {
+            System.out.println("Exception In ClientPackage.Client.processAndSend "+ee.getMessage());
         }
         util.closeAll();
     }
-
 }
