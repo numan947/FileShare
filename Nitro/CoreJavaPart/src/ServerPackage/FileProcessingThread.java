@@ -26,6 +26,7 @@ public class FileProcessingThread implements Runnable {
 
     //Thread related
     Thread thread=null;
+    private boolean corrupted;
 
 
     public FileProcessingThread(Socket accept) {
@@ -47,30 +48,61 @@ public class FileProcessingThread implements Runnable {
 
     @Override
     public void run() {
+        long totalSizetoRecieve=0;
+        long ct=System.currentTimeMillis();
         int totalRead;
+        corrupted=false;
         try {
             util.writeBuff("requesting total file numbers...".getBytes(encoding));
             totalRead=util.readBuff(buff);//buff has total number of files
-            System.out.println(new String(buff,0,totalRead,encoding));
-            int totalFiles=Integer.parseInt(new String(buff,0,totalRead,encoding));
-            util.writeBuff(("Will recieve "+totalFiles+" file(s)").getBytes(encoding));
-            for(int i=0;i<totalFiles;i++){
-                totalRead=util.readBuff(buff);
-                getFileNameAndSize(buff,totalRead);
-                util.writeBuff(("recieved name "+fileName+" "+fileSize).getBytes(encoding));
-                fbuff=new BufferedOutputStream(new FileOutputStream(DEFAULT_SAVE_FILE_PATH+separator+fileName));
-                int cnt=0;
+            if(totalRead!=-1) {
+                System.out.println(new String(buff, 0, totalRead, encoding));
+                int totalFiles = Integer.parseInt(new String(buff, 0, totalRead, encoding));
+                util.writeBuff(("Will recieve " + totalFiles + " file(s)").getBytes(encoding));
+                for (int i = 0; i < totalFiles; i++) {
+                    totalRead = util.readBuff(buff);
+                    int cnt = 0;
+                    if(totalRead!=-1) {
+                        getFileNameAndSize(buff, totalRead);
+                        totalSizetoRecieve+=fileSize;
+                        util.writeBuff(("recieved name " + fileName + " " + fileSize).getBytes(encoding));
+                        File f=new File(DEFAULT_SAVE_FILE_PATH + separator + fileName);
+                        int exist=1;
+                        if(f.exists()) {
+                            while (f.exists())
+                            {
+                                f = new File(DEFAULT_SAVE_FILE_PATH + separator + "(" + exist + ")" + fileName);
+                                exist++;
+                            }
+                        }
+                        fbuff = new BufferedOutputStream(new FileOutputStream(f));
 
-                while(true){
-                    if(cnt>=fileSize)break;
-                    totalRead=util.readBuff(buff);
-                    cnt+=totalRead;
-                    writeToFile(buff,totalRead);
-                    System.out.println(fileSize+"  "+totalRead);
+
+                        while (true) {
+                            if (cnt >= fileSize||totalRead==-1) break;
+                            totalRead = util.readBuff(buff);
+                            cnt += totalRead;
+                            writeToFile(buff, totalRead);
+                            System.out.println(fileSize + "  " + totalRead);
+                        }
+                        if(cnt < fileSize||totalRead==-1){
+                            System.out.println("Problem while transferring file..probably file's become corrupted");
+                            corrupted=true;
+                            f.delete();
+                        }
+                    }else{
+                        System.out.println("Problem while transferring file..probably file's become corrupted");
+                        corrupted=true;
+                    }
+                    if(!corrupted)util.writeBuff(("File " + (i + 1) + " recieved " + cnt + " bytes").getBytes(encoding));
                 }
-                util.writeBuff(("File "+(i+1)+" recieved "+cnt+" bytes").getBytes(encoding));
+            }else{
+                System.out.println("Problem while transferring file..probably file's become corrupted");
+                corrupted=true;
             }
-
+            util.closeAll();
+            System.out.println("total time taken to receive file: "+(System.currentTimeMillis()-ct));
+            System.out.println("total recieved in MB: "+(totalSizetoRecieve/(1024*1024)));
         } catch (UnsupportedEncodingException | FileNotFoundException e) {
             System.out.println("Exception In ServerPackage.FileProcessingThread.run "+e.getMessage());
         }

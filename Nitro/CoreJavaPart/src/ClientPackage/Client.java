@@ -63,6 +63,8 @@ public class Client {
 
     public void processAndSend()
     {
+        long totalSizetoSend=0;
+        long ct=System.currentTimeMillis();
         int totalRead;
         try {
             this.generateNames();
@@ -83,7 +85,7 @@ public class Client {
                             System.out.println("Sending File " + (i + 1) + "...");
                             selectedFile = new File(fileAddresses[i]);
                             fbuff = new BufferedInputStream(new FileInputStream(selectedFile));
-
+                            totalSizetoSend+=selectedFile.length();
                             //send file name & size
                             util.writeBuff((fileNames[i] + "$$$$" + selectedFile.length()).getBytes(encoding));
 
@@ -117,9 +119,11 @@ public class Client {
                 totalRead = util.readBuff(buff);
                 if (totalRead != -1) System.out.println(new String(buff, 0, totalRead, encoding));
             }
-        } catch (Exception ee) {
+        } catch (UnsupportedEncodingException ee) {
             System.out.println("Exception In ClientPackage.Client.processAndSend "+ee.getMessage());
         }
         util.closeAll();
+        System.out.println("total time taken to send file: "+(System.currentTimeMillis()-ct));
+        System.out.println("total sent in MB: "+(totalSizetoSend/(1024*1024)));
     }
 }
