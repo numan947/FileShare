@@ -1,3 +1,5 @@
+package tests;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,25 +28,26 @@ public class FTPClient {
 
 
         try {
-            localSocket = new Socket("localhost", 1080);
-            localFile = new File("/home/numan947/MyHome/Important/AndroidGraphicsResources/ETC/Holo.png");
+            localSocket = new Socket("localhost", 0);
+            System.out.println(localSocket.getPort());
+            //localFile = new File("/home/numan947/MyHome/Important/AndroidGraphicsResources/ETC/Holo.png");
             //System.out.println(localFile.exists());
 
             byte[] myByte = convertToBytes(localFile);
 
 
-            is = localSocket.getInputStream();
-            os = localSocket.getOutputStream();
-            is = new BufferedInputStream(is, 1024);
-            os = new BufferedOutputStream(os, myByte.length);
+            //is = localSocket.getInputStream();
+            //os = localSocket.getOutputStream();
+            //is = new BufferedInputStream(is, 1024);
+            //os = new BufferedOutputStream(os, myByte.length);
 
             String fName = localFile.getName() + "$$$$" + myByte.length + '?';
 
-            os.write(fName.getBytes());
-            os.flush();
+            //os.write(fName.getBytes());
+            //os.flush();
 
-            os.write(myByte);
-            os.flush();
+            //os.write(myByte);
+            //os.flush();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

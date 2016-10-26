@@ -1,4 +1,8 @@
-import java.io.*;
+package ClientPackage;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 /**
@@ -8,25 +12,27 @@ public class NetworkUtil {
     private BufferedInputStream is=null;
     private BufferedOutputStream os=null;
     private Socket socket=null;
+    private int DEFAULT_BUFFER_SIZE=49152;
+    private int BUFFER_SIZE;
 
     public NetworkUtil(Socket socket) {
         try {
             this.socket = socket;
-            this.os=new BufferedOutputStream(socket.getOutputStream());
-            this.is=new BufferedInputStream(socket.getInputStream());
+            this.os=new BufferedOutputStream(socket.getOutputStream(),DEFAULT_BUFFER_SIZE);
+            this.is=new BufferedInputStream(socket.getInputStream(),DEFAULT_BUFFER_SIZE);
         }catch (IOException e) {
-            System.out.println("Exception In NetworkUtil.Constructor1 "+e.getMessage());
+            System.out.println("Exception In ClientPackage.NetworkUtil.Constructor1 "+e.getMessage());
         }
     }
 
 
-    public NetworkUtil(String address,int port) {
+    public NetworkUtil(String address, int port) {
         try {
             this.socket = new Socket(address,port);
-            this.is=new BufferedInputStream(socket.getInputStream());
             this.os=new BufferedOutputStream(socket.getOutputStream());
+            this.is=new BufferedInputStream(socket.getInputStream());
         }catch (IOException e) {
-            System.out.println("Exception In NetworkUtil.Constructor2 "+e.getMessage());
+            System.out.println("Exception In ClientPackage.NetworkUtil.Constructor2 "+e.getMessage());
         }
     }
 
@@ -34,7 +40,7 @@ public class NetworkUtil {
         try{
             return is.read(buff);
         } catch (IOException e) {
-            System.out.println("Exception In NetworkUtil.readBuff "+e.getMessage());
+            System.out.println("Exception In ClientPackage.NetworkUtil.readBuff "+e.getMessage());
         }
         return 0;
     }
@@ -43,7 +49,7 @@ public class NetworkUtil {
             os.write(buff);
             os.flush();
         } catch (IOException e) {
-            System.out.println("Exception In NetworkUtil.writeBuff "+e.getMessage());
+            System.out.println("Exception In ClientPackage.NetworkUtil.writeBuff "+e.getMessage());
         }
     }
 
@@ -56,13 +62,22 @@ public class NetworkUtil {
             socket.getOutputStream().close();
             socket.close();
         } catch (IOException e) {
-            System.out.println("Exception In NetworkUtil.closeAll "+e.getMessage());
+            System.out.println("Exception In ClientPackage.NetworkUtil.closeAll "+e.getMessage());
         }
 
     }
+    public Socket getSocket()
+    {
+        return this.socket;
+    }
 
-
-
-
-
+    public void setBUFFER_SIZE(int BUFFER_SIZE) {
+        this.BUFFER_SIZE = BUFFER_SIZE;
+        try {
+            this.os=new BufferedOutputStream(socket.getOutputStream(),BUFFER_SIZE);
+            this.is=new BufferedInputStream(socket.getInputStream(),BUFFER_SIZE);
+        } catch (IOException e) {
+            System.out.println("Exception In ClientPackage.NetworkUtil.setBUFFER_SIZE "+e.getMessage());
+        }
+    }
 }

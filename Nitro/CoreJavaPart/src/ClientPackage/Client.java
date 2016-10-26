@@ -1,3 +1,5 @@
+package ClientPackage;
+
 import java.io.*;
 
 /**
@@ -43,13 +45,14 @@ public class Client {
         try {
             return fbuff.read(buff);
         } catch (IOException e) {
-            System.out.println("Exception In Client.getBuff "+e.getMessage());
+            System.out.println("Exception In ClientPackage.Client.getBuff "+e.getMessage());
         }
         return 0;
     }
 
     private void generateNames()
     {
+        fileNames=new String[fileAddresses.length];
         int cnt=0;
         for(String i: fileAddresses){
             fileNames[cnt++]=i.substring(i.lastIndexOf(this.separator)+1);
@@ -62,51 +65,47 @@ public class Client {
     {
         try {
             this.generateNames();
+
             //how many file to send and response from server
             util.readBuff(buff);
-            System.out.println(new String(buff, encoding));
-            util.writeBuff((""+fileAddresses.length).getBytes(encoding));
+            System.out.println(new String(buff));
+            util.writeBuff(("" + fileAddresses.length).getBytes());
             util.readBuff(buff);
-            System.out.println(new String(buff, encoding));
+            System.out.println(new String(buff));
 
-        } catch (UnsupportedEncodingException e) {
-            System.out.println("Exception In Client.processAndSend "+e.getMessage());
-        }
+            for (int i = 0; i < fileAddresses.length; i++) {
+                try {
+                    System.out.println("Sending File " + (i + 1) + "...");
+                    selectedFile = new File(fileAddresses[i]);
+                    fbuff = new BufferedInputStream(new FileInputStream(selectedFile));
 
+                    //send file name & size
+                    util.writeBuff((fileNames[i] + "$$$$" + selectedFile.length()).getBytes(encoding));
 
-        for(int i=0;i<fileAddresses.length;i++){
-            try {
-                System.out.println("Sending File "+(i+1)+"...");
-                selectedFile = new File(fileAddresses[i]);
-                fbuff = new BufferedInputStream(new FileInputStream(selectedFile));
+                    //response from server
+                    util.readBuff(buff);
+                    String msg = new String(buff);
+                    System.out.println(msg);
 
-                //send file name & size
-                util.writeBuff((fileNames[i]+"$$$$"+selectedFile.length()).getBytes(encoding));
+                    while (getBuff(buff) > -1) {
+                        util.writeBuff(buff);
+                    }
+                    util.writeBuff("$$$$".getBytes());
 
-                //response from server
-                util.readBuff(buff);
-                String msg=new String(buff,encoding);
-                System.out.println(msg);
+                    //response from server
+                    util.readBuff(buff);
+                    msg = new String(buff);
+                    System.out.println(msg);
 
-                while(getBuff(buff)>-1){
-                    util.writeBuff(buff);
+                    System.out.println("File " + i + " sent in stream");
+                } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                    System.out.println("Exception In ClientPackage.Client.processAndSend, iteration: " + i + " " + e.getMessage());
                 }
-
-                //response from server
-                util.readBuff(buff);
-                msg=new String(buff,encoding);
-                System.out.println(msg);
-
-                System.out.println("File "+i+" sent in stream");
-            } catch (FileNotFoundException | UnsupportedEncodingException e) {
-                System.out.println("Exception In Client.processAndSend, iteration: "+i+" "+e.getMessage());
             }
-        }
-        util.readBuff(buff);
-        try {
-            System.out.println(new String(buff, encoding));
+            util.readBuff(buff);
+            System.out.println(new String(buff));
         } catch (UnsupportedEncodingException e) {
-            System.out.println("Exception In Client.processAndSend "+e.getMessage());
+            System.out.println("Exception In ClientPackage.Client.processAndSend "+e.getMessage());
         }
         util.closeAll();
     }
