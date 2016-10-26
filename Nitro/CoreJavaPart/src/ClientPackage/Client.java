@@ -7,8 +7,8 @@ import java.io.*;
  **/
 public class Client {
     //buffer related
-    private int DEFAULT_BUFFER_SIZE=49152;
-    private int BUFFER_SIZE;
+    private int DEFAULT_BUFFER_SIZE=12000;
+    private int BUFFER_SIZE=36000;
 
     //server & network related
     private int port=46043;
@@ -84,7 +84,7 @@ public class Client {
                         try {
                             System.out.println("Sending File " + (i + 1) + "...");
                             selectedFile = new File(fileAddresses[i]);
-                            fbuff = new BufferedInputStream(new FileInputStream(selectedFile));
+                            fbuff = new BufferedInputStream(new FileInputStream(selectedFile),BUFFER_SIZE);
                             totalSizetoSend+=selectedFile.length();
                             //send file name & size
                             util.writeBuff((fileNames[i] + "$$$$" + selectedFile.length()).getBytes(encoding));
@@ -96,9 +96,16 @@ public class Client {
 
                                 System.out.println(msg);
 
+                                int tmpCt=0;
                                 while ((totalRead = getBuff(buff)) > -1) {
+                                    tmpCt+=totalRead;
                                     util.writeBuff(buff, 0, totalRead);
+                                    if(tmpCt>=DEFAULT_BUFFER_SIZE){
+                                        util.flushStream();
+                                        tmpCt=0;
+                                    }
                                 }
+                                util.flushStream();
                                 //util.writeBuff("$$$$".getBytes(encoding));
 
                                 //response from server
@@ -109,6 +116,8 @@ public class Client {
                                     System.out.println(msg);
 
                                     System.out.println("File " + i + " sent in stream");
+                                    System.out.println("Time taken "+(System.currentTimeMillis()-ct)/1000);
+                                    ct=System.currentTimeMillis();
                                 }
                             }
                         } catch (FileNotFoundException | UnsupportedEncodingException e) {
@@ -123,7 +132,7 @@ public class Client {
             System.out.println("Exception In ClientPackage.Client.processAndSend "+ee.getMessage());
         }
         util.closeAll();
-        System.out.println("total time taken to send file: "+(System.currentTimeMillis()-ct));
+        System.out.println("total time taken to send file: "+(System.currentTimeMillis()-ct)/1000.0);
         System.out.println("total sent in MB: "+(totalSizetoSend/(1024*1024)));
     }
 }

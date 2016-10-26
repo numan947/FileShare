@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Random;
 
 /**
  * Created by numan947 on 10/26/16.
@@ -12,7 +13,7 @@ public class NetworkUtil {
     private BufferedInputStream is=null;
     private BufferedOutputStream os=null;
     private Socket socket=null;
-    private int DEFAULT_BUFFER_SIZE=49152;
+    private int DEFAULT_BUFFER_SIZE=12000;
     private int BUFFER_SIZE;
 
     public NetworkUtil(Socket socket) {
@@ -46,12 +47,22 @@ public class NetworkUtil {
     }
     public void writeBuff(byte[]buff,int offset,int length){
         try{
+            Random r=new Random();
             os.write(buff,offset,length);
-            os.flush();
         } catch (IOException e) {
             System.out.println("Exception In ClientPackage.NetworkUtil.writeBuff "+e.getMessage());
         }
     }
+
+    public void flushStream()
+    {
+        try {
+            os.flush();
+        } catch (IOException e) {
+            System.out.println("Exception In ClientPackage.NetworkUtil.flushStream "+e.getMessage());
+        }
+    }
+
     public void writeBuff(byte[]buff){
         try{
             os.write(buff);

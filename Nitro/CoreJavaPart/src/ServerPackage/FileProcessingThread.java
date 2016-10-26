@@ -8,8 +8,8 @@ import java.net.Socket;
  **/
 public class FileProcessingThread implements Runnable {
     //buffer related
-    private int DEFAULT_BUFFER_SIZE=49152;
-    private int BUFFER_SIZE;
+    private int NETWORK_BUFFER_SIZE=12000;
+    private int FILE_BUFFER_SIZE=36000;
 
     //server & network related
     private NetworkUtil util=null;
@@ -31,15 +31,16 @@ public class FileProcessingThread implements Runnable {
 
     public FileProcessingThread(Socket accept) {
         this.util=new NetworkUtil(accept);
-        this.buff=new byte[DEFAULT_BUFFER_SIZE];
+        this.buff=new byte[NETWORK_BUFFER_SIZE];
         this.thread=new Thread(this);
         thread.start();
     }
 
-    private void writeToFile(byte[] b, int totalRead)
+    private void writeToFile(byte[] b, int totalRead,int cnt)
     {
         try {
             fbuff.write(b,0,totalRead);
+            if(3*cnt>=FILE_BUFFER_SIZE)fbuff.flush();
         } catch (IOException e) {
             System.out.println("Exception In ServerPackage.FileProcessingThread.writeToFile "+e.getMessage());
         }
@@ -75,14 +76,14 @@ public class FileProcessingThread implements Runnable {
                                 exist++;
                             }
                         }
-                        fbuff = new BufferedOutputStream(new FileOutputStream(f));
+                        fbuff = new BufferedOutputStream(new FileOutputStream(f),FILE_BUFFER_SIZE);
 
 
                         while (true) {
                             if (cnt >= fileSize||totalRead==-1) break;
                             totalRead = util.readBuff(buff);
                             cnt += totalRead;
-                            writeToFile(buff, totalRead);
+                            writeToFile(buff, totalRead,cnt);
                             System.out.println(fileSize + "  " + totalRead);
                         }
                         if(cnt < fileSize||totalRead==-1){

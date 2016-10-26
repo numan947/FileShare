@@ -12,14 +12,14 @@ public class NetworkUtil {
     private BufferedInputStream is=null;
     private BufferedOutputStream os=null;
     private Socket socket=null;
-    private int DEFAULT_BUFFER_SIZE=49152;
-    private int BUFFER_SIZE;
+    private int NETWORK_BUFFER_SIZE=12000;
+    private int FILE_BUFFER_SIZE=36000;
 
     public NetworkUtil(Socket socket) {
         try {
             this.socket = socket;
-            this.os=new BufferedOutputStream(socket.getOutputStream(),DEFAULT_BUFFER_SIZE);
-            this.is=new BufferedInputStream(socket.getInputStream(),DEFAULT_BUFFER_SIZE);
+            this.os=new BufferedOutputStream(socket.getOutputStream(),NETWORK_BUFFER_SIZE);
+            this.is=new BufferedInputStream(socket.getInputStream(),NETWORK_BUFFER_SIZE);
         }catch (IOException e) {
             System.out.println("Exception In ServerPackage.NetworkUtil.Constructor1 "+e.getMessage());
         }
@@ -76,15 +76,5 @@ public class NetworkUtil {
         return this.socket;
     }
 
-
-    public void setBUFFER_SIZE(int BUFFER_SIZE) {
-        this.BUFFER_SIZE = BUFFER_SIZE;
-        try {
-            this.os=new BufferedOutputStream(socket.getOutputStream(),BUFFER_SIZE);
-            this.is=new BufferedInputStream(socket.getInputStream(),BUFFER_SIZE);
-        } catch (IOException e) {
-            System.out.println("Exception In ClientPackage.NetworkUtil.setBUFFER_SIZE "+e.getMessage());
-        }
-    }
 
 }
