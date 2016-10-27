@@ -19,6 +19,7 @@ public class Server {
     public Server() {
         try {
             serverSocket=new ServerSocket(port,20);
+
             serverFlag=true;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE,logHelper+".Constructor1 "+e.getMessage());

@@ -23,11 +23,11 @@ public class ClientTester {
         //File ff=new File("/media/numan947/Recreation/Music Videos");
         //getFiles(ff,v);
         //File ff=new File("/media/numan947/Recreation/Anime/Watched");
-        File ff=new File("/media/numan947/ETC/Anime/Not Watched/Denpa Teki na Kanojo [720p] mHD");
+        File ff=new File("/media/numan947/Another/Anime/Not Watched/Saenai Heroine no Sodatekata (10bit 720p) [project-gxs] [FFF]");
         getFiles(ff,v);
 
-        String[]ss=new String[v.size()];
-        for(int i=0;i<v.size();i++){
+        String[]ss=new String[v.size()/4];
+        for(int i=0;i<v.size()/4;i++){
             ss[i]=v.get(i);
             System.out.println(v.get(i));
         }
