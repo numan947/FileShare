@@ -1,7 +1,8 @@
-import ClientPackage.Client;
+import coreJava.ClientPackage.Client;
 
 import java.io.File;
 import java.util.Vector;
+import java.util.concurrent.RunnableFuture;
 
 /**
  * Created by numan947 on 10/26/16.
@@ -9,32 +10,28 @@ import java.util.Vector;
 public class ClientTester {
 
 
-    static void getFiles(File f,Vector<String>v)
+    static void getFiles(File f,Vector<File>v)
     {
         if(f.isDirectory()){
             for(File ff:f.listFiles())getFiles(ff,v);
         }
-        if(!f.isDirectory()) v.addElement(f.getAbsolutePath());
+        if(!f.isDirectory()) v.addElement(f);
     }
 
 
     public static void main(String[] args) {
-        Vector<String>v=new Vector<>();
+        Vector<File>v=new Vector<>();
         //File ff=new File("/media/numan947/Recreation/Music Videos");
         //getFiles(ff,v);
         //File ff=new File("/media/numan947/Recreation/Anime/Watched");
-        File ff=new File("/media/numan947/Another/Anime/Not Watched/Saenai Heroine no Sodatekata (10bit 720p) [project-gxs] [FFF]");
+        File ff=new File("/media/numan947/Recreation/Light Novel/Tate no Yuusha no Nariagari (Completed)");
         getFiles(ff,v);
 
-        String[]ss=new String[v.size()/4];
-        for(int i=0;i<v.size()/4;i++){
-            ss[i]=v.get(i);
-            System.out.println(v.get(i));
-        }
+        File[]t= new File[v.size()];
+        v.toArray(t);
+        for(File tt:t) System.out.println(tt.getName());
 
-        System.out.println(v.size());
+        Client client=new Client("192.168.0.104", t);
 
-        Client client=new Client("192.168.0.104",ss);
-        client.processAndSend();
     }
 }

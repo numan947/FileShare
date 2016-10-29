@@ -1,29 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.control.*?>
 <?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <BorderPane fx:id="v2bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.V2Controller">
    <right>
-      <ListView fx:id="v2errorlist" prefHeight="317.0" prefWidth="211.0" BorderPane.alignment="CENTER">
+      <ListView fx:id="v2loglist" prefHeight="317.0" prefWidth="211.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding></ListView>
    </right>
-   <left>
-      <TableView fx:id="v2filetable" prefHeight="317.0" prefWidth="202.0" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn fx:id="v2filenamecol" prefWidth="98.0" text="File Name" />
-          <TableColumn fx:id="v2statuscol" prefWidth="101.0" text="Status" />
-        </columns>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </TableView>
-   </left>
    <center>
       <VBox alignment="TOP_CENTER" prefHeight="246.0" prefWidth="197.0" spacing="3.0" BorderPane.alignment="CENTER">
          <children>
@@ -33,27 +22,27 @@
                </font>
             </TextField>
             <Region VBox.vgrow="ALWAYS" />
-            <Button fx:id="v2selectfile" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="46.0" prefWidth="107.0" text="SelectFile">
+            <Button fx:id="v2selectfile" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#selectFile" prefHeight="46.0" prefWidth="107.0" text="SelectFile">
                <font>
                   <Font size="22.0" />
                </font>
             </Button>
-            <Button fx:id="v2remove" layoutX="50.0" layoutY="35.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="46.0" prefWidth="107.0" text="Remove">
+            <Button fx:id="v2remove" layoutX="50.0" layoutY="35.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#removeFile" prefHeight="46.0" prefWidth="107.0" text="Remove">
                <font>
                   <Font size="22.0" />
                </font>
             </Button>
-            <Button fx:id="v2send" layoutX="50.0" layoutY="81.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="46.0" prefWidth="107.0" text="Send">
+            <Button fx:id="v2send" layoutX="50.0" layoutY="81.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#sendFile" prefHeight="46.0" prefWidth="107.0" text="Send">
                <font>
                   <Font size="22.0" />
                </font>
             </Button>
-            <Button fx:id="v2stop" layoutX="12.0" layoutY="164.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="46.0" prefWidth="107.0" text="Stop">
+            <Button fx:id="v2stop" layoutX="12.0" layoutY="164.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#stopSending" prefHeight="46.0" prefWidth="107.0" text="Stop">
                <font>
                   <Font size="22.0" />
                </font>
             </Button>
-            <Button fx:id="v2back" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="48.0" prefWidth="106.0" text="Back">
+            <Button fx:id="v2back" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#backAction" prefHeight="48.0" prefWidth="106.0" text="Back">
                <font>
                   <Font size="22.0" />
                </font>
@@ -114,7 +103,7 @@
                </font>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <Label alignment="BOTTOM_CENTER" prefHeight="75.0" prefWidth="102.0" text="Error Log">
+            <Label alignment="BOTTOM_CENTER" prefHeight="75.0" prefWidth="102.0" text="Log">
                <font>
                   <Font size="22.0" />
                </font>
@@ -128,4 +117,7 @@
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
    </padding>
+   <left>
+      <ListView fx:id="v2filelist" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </left>
 </BorderPane>
