@@ -114,6 +114,7 @@ public class Client implements Runnable {
                                         controller.clearVisualEffect();
                                         controller.showMessage("ERROR SENDING!!!","Reciever closed the connection!", Alert.AlertType.ERROR);
                                         stop=true;
+                                        fbuff.close();
                                         return;
                                     }
 
@@ -123,8 +124,10 @@ public class Client implements Runnable {
                                     }
                                     controller.setPrimaryVisulaEffect(totalSent,selectedFile.length());
                                 }
+
                                 util.flushStream();
-                                //util.writeBuff("$$$$".getBytes(encoding));
+                                fbuff.close();
+
                                 if(stop){
                                     //TODO FIXIT
                                     controller.clearVisualEffect();
@@ -147,7 +150,7 @@ public class Client implements Runnable {
                                     ct=System.currentTimeMillis();*/
                                 }
                             }
-                        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+                        } catch (IOException e) {
                             System.out.println("Exception In ClientPackage.Client.processAndSend, iteration: " + i + " " + e.getMessage());
                         }
                     }
@@ -172,14 +175,23 @@ public class Client implements Runnable {
             this.util = new NetworkUtil(serverAddress, port);
 
         }catch (IOException e){
+            if(stop)return;
             controller.showMessage("ERROR WHILE CONNECTING","Can't Connect to host "+e.getMessage(), Alert.AlertType.ERROR);
             controller.changeSendStopButtonStates();
             return;
         }
 
-        this.processAndSend();
         if(stop){
             System.out.println("BREAKING THREAD");
+            util.closeAll();
+            return;
+        }
+
+        this.processAndSend();
+
+        if(stop){
+            System.out.println("BREAKING THREAD");
+            util.closeAll();
             return;
         }
 

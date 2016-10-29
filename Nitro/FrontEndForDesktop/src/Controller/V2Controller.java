@@ -4,8 +4,13 @@ import coreJava.ClientPackage.Client;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import main.Main;
@@ -31,7 +36,6 @@ public class V2Controller {
 
     private FileChooser fileChooser=null;
 
-    private boolean sendingComplete;
 
     @FXML
     private ResourceBundle resources;
@@ -84,7 +88,6 @@ public class V2Controller {
     @FXML
     private ListView <File> v2filelist;
 
-    private ArrayList<Boolean>v2fileStatus;
 
 
     @FXML
@@ -93,10 +96,7 @@ public class V2Controller {
         if(InitDir!=null)fileChooser.setInitialDirectory(InitDir);
         List<File> ff =fileChooser.showOpenMultipleDialog(main.getPrimaryStage());
         if(ff!=null) {
-            for(File f:ff){
-                v2filelist.getItems().add(f);
-                v2fileStatus.add(false);
-            }
+            v2filelist.getItems().addAll(ff);
             InitDir=ff.get(0).getAbsoluteFile().getParentFile();
             if(v2remove.isDisable())v2remove.setDisable(false);
         }
@@ -104,14 +104,9 @@ public class V2Controller {
 
     @FXML
     void removeFile(ActionEvent event) {
-        ObservableList<Integer> l2=this.v2filelist.getSelectionModel().getSelectedIndices();
-        ObservableList <File> curr=this.v2filelist.getItems();
-
-        for(int f: l2){
-            curr.remove(f);
-            this.v2fileStatus.remove(f);
-        }
-        if(v2fileStatus.size()==0)v2remove.setDisable(true);
+        ObservableList<File> l2=this.v2filelist.getSelectionModel().getSelectedItems();
+        this.v2filelist.getItems().removeAll(l2);
+        if(v2filelist.getItems().size()==0)v2remove.setDisable(true);
     }
 
     @FXML
@@ -179,15 +174,34 @@ public class V2Controller {
         assert v2bp != null : "fx:id=\"v2bp\" was not injected: check your FXML file 'view2.fxml'.";
         assert v2totallabel != null : "fx:id=\"v2totallabel\" was not injected: check your FXML file 'view2.fxml'.";
 
+
         this.v2filelist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        this.v2bp.setOnMouseClicked(event -> {
+            v2bp.requestFocus();
+        });
+
         v2stop.setDisable(true);
-
-        v2fileStatus=new ArrayList<>();
-
-        sendingComplete=false;
-
-
+        v2remove.setDisable(true);
         clearVisualEffect();
+
+        v2filelist.setOnDragOver(event -> {
+            Dragboard db=event.getDragboard();
+            if(db.hasFiles())event.acceptTransferModes(TransferMode.LINK);
+        });
+
+        v2filelist.setOnDragDropped(event->{
+            Dragboard db=event.getDragboard();
+            if(db.hasFiles()){
+                List<File> ff=db.getFiles();
+                for(File f:ff){
+                    if(f.isDirectory())continue;
+                    else this.v2filelist.getItems().add(f);
+                }
+
+            }
+        });
+
     }
     public void setMain(Main main) {
         this.main = main;
@@ -196,8 +210,10 @@ public class V2Controller {
     public void updateLog(File f)
     {
         Platform.runLater(() -> {
-            v2loglist.getItems().add(f.getName()+" sent");
+            v2loglist.getItems().add("Sent: "+f.getName());
             v2filelist.getItems().remove(f);
+            System.out.println(v2filelist.getItems().size());
+            if(v2filelist.getItems().size()==0)v2remove.setDisable(false);
         });
     }
 

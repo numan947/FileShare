@@ -31,7 +31,7 @@ public class NetworkUtil {
     public NetworkUtil(String address, int port) throws IOException {
         try {
             this.socket = new Socket();
-            this.socket.connect(new InetSocketAddress(address,port),10000);
+            this.socket.connect(new InetSocketAddress(address,port),7000);
             this.os=new BufferedOutputStream(socket.getOutputStream());
             this.is=new BufferedInputStream(socket.getInputStream());
         }catch (IOException e) {
