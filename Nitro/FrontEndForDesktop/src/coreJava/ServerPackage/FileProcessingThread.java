@@ -1,7 +1,12 @@
 package coreJava.ServerPackage;
 
+import Controller.V3Controller;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
+
 import java.io.*;
 import java.net.Socket;
+import java.text.DecimalFormat;
 
 /**
  * Created by numan947 on 10/26/16.
@@ -15,7 +20,7 @@ public class FileProcessingThread implements Runnable {
     private NetworkUtil util=null;
 
     //file transfer related
-    private String DEFAULT_SAVE_FILE_PATH="/home/numan947/MyHome/Important/JAVA/testsForNitro";
+    private String DEFAULT_SAVE_FILE_PATH=null;
     private String saveFilePath=null;
     private String fileName=null;
     private int fileSize;
@@ -25,13 +30,23 @@ public class FileProcessingThread implements Runnable {
     private String encoding="UTF-8";
 
     //Thread related
-    Thread thread=null;
+    private Thread thread=null;
     private boolean corrupted;
 
 
-    public FileProcessingThread(Socket accept) {
+    //gui related
+    private V3Controller controller=null;
+    private boolean stop;
+    long totalrecieved;
+    long startTime;
+
+
+    public FileProcessingThread(Socket accept, V3Controller controller,String DEFAULT_SAVE_FILE_PATH) {
+        this.controller=controller;
+        this.DEFAULT_SAVE_FILE_PATH=DEFAULT_SAVE_FILE_PATH;
         this.util=new NetworkUtil(accept);
         this.buff=new byte[NETWORK_BUFFER_SIZE];
+        this.stop=false;
         this.thread=new Thread(this);
         thread.start();
     }
@@ -47,10 +62,11 @@ public class FileProcessingThread implements Runnable {
     }
 
 
-    @Override
-    public void run() {
-        long totalSizetoRecieve=0;
-        long ct=System.currentTimeMillis();
+    public void receiveAndProcess()
+    {
+        totalrecieved=0;
+        startTime=System.currentTimeMillis();
+
         int totalRead;
         corrupted=false;
         try {
@@ -65,7 +81,7 @@ public class FileProcessingThread implements Runnable {
                     int cnt = 0;
                     if(totalRead!=-1) {
                         getFileNameAndSize(buff, totalRead);
-                        totalSizetoRecieve+=fileSize;
+                        totalrecieved+=fileSize;
                         util.writeBuff(("recieved name " + fileName + " " + fileSize).getBytes(encoding));
                         File f=new File(DEFAULT_SAVE_FILE_PATH + separator + fileName);
                         int exist=1;
@@ -77,20 +93,46 @@ public class FileProcessingThread implements Runnable {
                             }
                         }
                         fbuff = new BufferedOutputStream(new FileOutputStream(f),FILE_BUFFER_SIZE);
+                        //TODO gui update
+                        controller.setSecondaryVisualEffect(fileName,fileSize);
 
-
-                        while (true) {
+                        while (!stop) {
                             if (cnt >= fileSize||totalRead==-1) break;
                             totalRead = util.readBuff(buff);
-                            cnt += totalRead;
-                            writeToFile(buff, totalRead,cnt);
+                            if(totalRead!=-1) {
+                                cnt += totalRead;
+                                writeToFile(buff, totalRead, cnt);
+                                //TODO gui
+                                controller.setPrimaryVisualEffect(cnt, fileSize);
+                            }
                             System.out.println(fileSize + "  " + totalRead);
                         }
+
+                        fbuff.close();
+
                         if(cnt < fileSize||totalRead==-1){
                             System.out.println("Problem while transferring file..probably file's become corrupted");
                             corrupted=true;
                             f.delete();
+                            if(totalRead==-1){
+                                //TODO gui
+                                controller.regenerateServer();
+                                controller.clearVisualEffect();
+                                controller.showMessage("ERROR!!","Problem while receiving"+ f.getName()+" device disconnected the connection", Alert.AlertType.ERROR);
+                                return;
+                            }
+                            else if(stop){
+                                //TODo gui
+                                controller.clearVisualEffect();
+                                controller.showMessage("Receiving stopped","Did you stopped the server?", Alert.AlertType.WARNING);
+                                return;
+                            }
                         }
+
+
+                        //TODO ui update
+                        controller.clearVisualEffect();
+                        controller.updateFileList(f);
                     }else{
                         System.out.println("Problem while transferring file..probably file's become corrupted");
                         corrupted=true;
@@ -101,13 +143,20 @@ public class FileProcessingThread implements Runnable {
                 System.out.println("Problem while transferring file..probably file's become corrupted");
                 corrupted=true;
             }
-            util.closeAll();
-            System.out.println("total time taken to receive file: "+(System.currentTimeMillis()-ct));
-            System.out.println("total recieved in MB: "+(totalSizetoRecieve/(1024*1024)));
-        } catch (UnsupportedEncodingException | FileNotFoundException e) {
+        } catch (IOException e) {
             System.out.println("Exception In ServerPackage.FileProcessingThread.run "+e.getMessage());
         }
+        controller.regenerateServer();
+    }
 
+
+    @Override
+    public void run() {
+        this.receiveAndProcess();
+        util.closeAll();
+        double dd=(double)totalrecieved/(1024*1024);
+        double tt=(double)(System.currentTimeMillis()-startTime)/1000;
+        controller.showMessage("SUCCESS!!","You recieved "+new DecimalFormat("#0.00").format(dd)+" in "+tt+" second(s) from "+util.getSocket().getInetAddress().getHostName(), Alert.AlertType.INFORMATION);
     }
 
     private void getFileNameAndSize(byte[] buff,int totalRead) {
@@ -118,5 +167,9 @@ public class FileProcessingThread implements Runnable {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
     }
 }

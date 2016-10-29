@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -19,6 +20,7 @@ public class Main extends Application {
 
     private static Logger logger=Logger.getLogger(Main.class.getName());
     private static final String logmsg="Exception in main.Main.class ";
+    private static File stateFile=new File("STATEFILE");
 
     private Stage primaryStage=null;
 
@@ -93,12 +95,26 @@ public class Main extends Application {
         primaryStage.setScene(v3Scene);
     }
 
+    public void setInitialDirectory(File f)
+    {
+        v2Controller.setInitDir(f);
+    }
+
+    public void setDestDirectory(File f)
+    {
+        v3Controller.setDefaultSavePath(f);
+    }
+
 
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.ConfigLog();
         this.loadFXML();
+        if(stateFile.exists()){
+
+        }
+
         this.primaryStage=primaryStage;
         primaryStage.setScene(v1Scene);
         primaryStage.show();
@@ -107,5 +123,6 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+        System.exit(0);
     }
 }

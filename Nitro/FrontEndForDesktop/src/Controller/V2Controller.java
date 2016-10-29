@@ -4,12 +4,9 @@ import coreJava.ClientPackage.Client;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -18,7 +15,6 @@ import main.Main;
 import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -89,6 +85,13 @@ public class V2Controller {
     private ListView <File> v2filelist;
 
 
+    public File getInitDir() {
+        return InitDir;
+    }
+
+    public void setInitDir(File initDir) {
+        InitDir = initDir;
+    }
 
     @FXML
     void selectFile(ActionEvent event) {
@@ -118,8 +121,8 @@ public class V2Controller {
         //validation check
         boolean valid=address.matches("10\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
         valid|=address.matches("192.168\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
-        valid|=address.matches("172.16\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
-        
+        valid|=address.matches("172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
+
         if(!valid||list.isEmpty()){
             this.showMessage("ERROR!! PARAMETERS DON'T MATCH","Is the list empty? Or is the address invalid?", Alert.AlertType.ERROR);
             event.consume();
@@ -176,7 +179,7 @@ public class V2Controller {
 
 
         this.v2filelist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-
+        v2bp.requestFocus();
         this.v2bp.setOnMouseClicked(event -> {
             v2bp.requestFocus();
         });
@@ -238,14 +241,15 @@ public class V2Controller {
             this.v2filenamelabel.setText(fileName);
             if(total>toMB){
                 v2mb_kb_label.setText("MB");
-                v2totallabel.setText(String.valueOf((double)total/toMB));
+                double dd=(double)total/toMB;
+                v2totallabel.setText(new DecimalFormat("#0.00").format(dd));
             }
             else{
                 v2mb_kb_label.setText("KB");
-                v2totallabel.setText(String.valueOf((double)total/toKB));
+                double dd=(double)total/toKB;
+                v2totallabel.setText(new DecimalFormat("#0.00").format(dd));
             }
         });
-
     }
 
     public void clearVisualEffect()
@@ -281,6 +285,10 @@ public class V2Controller {
         else v2stop.setDisable(true);
         if(v2remove.isDisable())v2remove.setDisable(false);
         else v2remove.setDisable(true);
+        if(v2filelist.isDisable())v2filelist.setDisable(false);
+        else v2filelist.setDisable(true);
+        if(v2send.isDisable())v2back.setDisable(true);
+        else v2back.setDisable(false);
     }
 
 
