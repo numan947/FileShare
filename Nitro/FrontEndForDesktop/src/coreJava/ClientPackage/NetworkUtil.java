@@ -3,6 +3,7 @@ package coreJava.ClientPackage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Random;
 
@@ -27,13 +28,15 @@ public class NetworkUtil {
     }
 
 
-    public NetworkUtil(String address, int port) {
+    public NetworkUtil(String address, int port) throws IOException {
         try {
-            this.socket = new Socket(address,port);
+            this.socket = new Socket();
+            this.socket.connect(new InetSocketAddress(address,port),10000);
             this.os=new BufferedOutputStream(socket.getOutputStream());
             this.is=new BufferedInputStream(socket.getInputStream());
         }catch (IOException e) {
             System.out.println("Exception In ClientPackage.NetworkUtil.Constructor2 "+e.getMessage());
+            throw e;
         }
     }
 
@@ -45,12 +48,13 @@ public class NetworkUtil {
         }
         return 0;
     }
-    public void writeBuff(byte[]buff,int offset,int length){
+    public void writeBuff(byte[]buff,int offset,int length) throws IOException{
         try{
             Random r=new Random();
             os.write(buff,offset,length);
         } catch (IOException e) {
             System.out.println("Exception In ClientPackage.NetworkUtil.writeBuff "+e.getMessage());
+        	throw e;
         }
     }
 

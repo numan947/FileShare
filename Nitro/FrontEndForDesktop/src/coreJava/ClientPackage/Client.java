@@ -1,8 +1,10 @@
 package coreJava.ClientPackage;
 
 import Controller.V2Controller;
+import javafx.scene.control.Alert;
 
 import java.io.*;
+import java.text.DecimalFormat;
 
 /**
  * Created by numan947 on 10/26/16.
@@ -32,15 +34,12 @@ public class Client implements Runnable {
     private V2Controller controller=null;
     private boolean stop;
 
+    //statistics flags
+    long startTime;
+    long totalTime;
+    long totalsize;
 
-    public Client(String serverAddress,String[]fileAddresses) {
 
-        this.serverAddress=serverAddress;
-        this.fileAddresses=fileAddresses;
-        this.util=new NetworkUtil(serverAddress,port);
-        this.buff=new byte[DEFAULT_BUFFER_SIZE];
-
-    }
     public Client(V2Controller controller,String serverAddress,File[]files) {
 
         this.controller=controller;
@@ -54,11 +53,6 @@ public class Client implements Runnable {
 
     }
 
-    public Client() {
-        util=new NetworkUtil(serverAddress,port);
-        buff=new byte[DEFAULT_BUFFER_SIZE];
-    }
-
 
     private int getBuff(byte[]buff)
     {
@@ -70,27 +64,14 @@ public class Client implements Runnable {
         return 0;
     }
 
-    private void generateNames()
-    {
-/*
-        fileNames=new String[fileAddresses.length];
-        int cnt=0;
-        for(String i: fileAddresses){
-            fileNames[cnt++]=i.substring(i.lastIndexOf(this.separator)+1);
-        }
-*/
-    }
-
-
 
     public void processAndSend()
     {
-        long totalSizetoSend=0;
-        long ct=System.currentTimeMillis();
+
+        startTime=System.currentTimeMillis();
         int totalRead;
         try {
-            this.generateNames();
-
+ 
             //how many file to send and response from server
             totalRead=util.readBuff(buff);
             if(totalRead!=-1) {
@@ -107,7 +88,7 @@ public class Client implements Runnable {
                             System.out.println("Sending File " + (i + 1) + "...");
                             selectedFile = files[i];
                             fbuff = new BufferedInputStream(new FileInputStream(selectedFile),BUFFER_SIZE);
-                            totalSizetoSend+=selectedFile.length();
+                            totalsize+=selectedFile.length();
                             //send file name & size
                             util.writeBuff((selectedFile.getName() + "$$$$" + selectedFile.length()).getBytes(encoding));
 
@@ -125,7 +106,17 @@ public class Client implements Runnable {
                                 while ((totalRead = getBuff(buff)) > -1 && !stop) {
                                     tmpCt+=totalRead;
                                     totalSent+=totalRead;
-                                    util.writeBuff(buff, 0, totalRead);
+
+                                    try {
+                                        util.writeBuff(buff, 0, totalRead);
+                                    }catch (IOException e){
+                                        controller.changeSendStopButtonStates();
+                                        controller.clearVisualEffect();
+                                        controller.showMessage("ERROR SENDING!!!","Reciever closed the connection!", Alert.AlertType.ERROR);
+                                        stop=true;
+                                        return;
+                                    }
+
                                     if(tmpCt>=DEFAULT_BUFFER_SIZE){
                                         util.flushStream();
                                         tmpCt=0;
@@ -135,10 +126,12 @@ public class Client implements Runnable {
                                 util.flushStream();
                                 //util.writeBuff("$$$$".getBytes(encoding));
                                 if(stop){
-                                    controller.errorMessage("Sending stopped by user while sending "+selectedFile.getName());
+                                    //TODO FIXIT
                                     controller.clearVisualEffect();
+                                    controller.showMessage("SENDING INTERRUPTED!!","Did you just hit the stop button? "+selectedFile.getName()+" not sent", Alert.AlertType.WARNING);
                                     return;
                                 }
+                                controller.clearVisualEffect();
                                 controller.updateLog(selectedFile);
 
 
@@ -148,10 +141,10 @@ public class Client implements Runnable {
                                     msg = new String(buff, 0, totalRead, encoding);
 
                                     System.out.println(msg);
-
-                                    System.out.println("File " + i + " sent in stream");
+//TODO cleanup these
+/*                                    System.out.println("File " + i + " sent in stream");
                                     System.out.println("Time taken "+(System.currentTimeMillis()-ct)/1000);
-                                    ct=System.currentTimeMillis();
+                                    ct=System.currentTimeMillis();*/
                                 }
                             }
                         } catch (FileNotFoundException | UnsupportedEncodingException e) {
@@ -165,16 +158,36 @@ public class Client implements Runnable {
         } catch (UnsupportedEncodingException ee) {
             System.out.println("Exception In ClientPackage.Client.processAndSend "+ee.getMessage());
         }
-        System.out.println("total time taken to send file: "+(System.currentTimeMillis()-ct)/1000.0);
-        System.out.println("total sent in MB: "+(totalSizetoSend/(1024*1024)));
+        System.out.println("total time taken to send file: "+(System.currentTimeMillis()-startTime)/1000.0);
+        System.out.println("total sent in MB: "+((double)totalsize/(1024*1024)));
     }
+
+
 
     @Override
     public void run() {
         //TODO remove
         System.out.println(port+" GOT "+ serverAddress);
-        this.util=new NetworkUtil(serverAddress,port);
+        try {
+            this.util = new NetworkUtil(serverAddress, port);
+
+        }catch (IOException e){
+            controller.showMessage("ERROR WHILE CONNECTING","Can't Connect to host "+e.getMessage(), Alert.AlertType.ERROR);
+            controller.changeSendStopButtonStates();
+            return;
+        }
+
         this.processAndSend();
+        if(stop){
+            System.out.println("BREAKING THREAD");
+            return;
+        }
+
+        double sentInMB=(double)totalsize/(1024*1024);
+        double timetaken=(double)(System.currentTimeMillis()-startTime)/1000;
+
+        controller.showMessage("SUCCESS!!","You sent "+new DecimalFormat("#0.000").format(sentInMB)+" MB in "+new DecimalFormat("#0.000").format(timetaken)+" second(s)", Alert.AlertType.INFORMATION);
+        controller.changeSendStopButtonStates();
         util.closeAll();
     }
 

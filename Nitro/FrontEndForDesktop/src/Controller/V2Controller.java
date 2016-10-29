@@ -20,6 +20,8 @@ import java.util.ResourceBundle;
 
 public class V2Controller {
 
+    private File InitDir=null;
+
     private final long toKB=1024;
     private final long toMB=1048576;
 
@@ -29,9 +31,6 @@ public class V2Controller {
 
     private FileChooser fileChooser=null;
 
-
-    private boolean sendFlag;
-    private boolean stopFlag;
     private boolean sendingComplete;
 
     @FXML
@@ -91,12 +90,15 @@ public class V2Controller {
     @FXML
     void selectFile(ActionEvent event) {
         if(fileChooser==null)fileChooser=new FileChooser();
-        List<File> ff=fileChooser.showOpenMultipleDialog(main.getPrimaryStage());
+        if(InitDir!=null)fileChooser.setInitialDirectory(InitDir);
+        List<File> ff =fileChooser.showOpenMultipleDialog(main.getPrimaryStage());
         if(ff!=null) {
             for(File f:ff){
                 v2filelist.getItems().add(f);
                 v2fileStatus.add(false);
             }
+            InitDir=ff.get(0).getAbsoluteFile().getParentFile();
+            if(v2remove.isDisable())v2remove.setDisable(false);
         }
     }
 
@@ -109,23 +111,35 @@ public class V2Controller {
             curr.remove(f);
             this.v2fileStatus.remove(f);
         }
-
-        //TODO remove these
-        System.out.println(v2fileStatus.size());
-        System.out.println(v2filelist.getItems().size());
+        if(v2fileStatus.size()==0)v2remove.setDisable(true);
     }
 
     @FXML
     void sendFile(ActionEvent event) {
-        v2send.setDisable(true);
-        v2stop.setDisable(false);
 
         ObservableList<File>list=this.v2filelist.getItems();
+        String address=v2destaddress.getText();
+
+        //validation check
+        boolean valid=address.matches("10\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
+        valid|=address.matches("192.168\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
+        valid|=address.matches("172.16\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
+        
+        if(!valid||list.isEmpty()){
+            this.showMessage("ERROR!! PARAMETERS DON'T MATCH","Is the list empty? Or is the address invalid?", Alert.AlertType.ERROR);
+            event.consume();
+            return;
+        }
+
+
+        this.changeSendStopButtonStates();
+
         File[]ff=new File[list.size()];
         list.toArray(ff);
 
         //TODO remove this
         for(int i=0;i<ff.length;i++) System.out.println(ff[i].getName());
+
         if(ff.length>0&&v2destaddress.toString()!=null){
             System.out.println(v2destaddress.getText());
             client=new Client(this,v2destaddress.getText(),ff);
@@ -134,14 +148,11 @@ public class V2Controller {
 
     @FXML
     void stopSending(ActionEvent event) {
-        v2send.setDisable(false);
-        v2stop.setDisable(true);
+        this.changeSendStopButtonStates();
         if(client!=null){
             client.setStop(true);
             client=null;
         }
-
-
     }
 
     @FXML
@@ -172,8 +183,7 @@ public class V2Controller {
         v2stop.setDisable(true);
 
         v2fileStatus=new ArrayList<>();
-        sendFlag=false;
-        stopFlag=true;
+
         sendingComplete=false;
 
 
@@ -193,7 +203,6 @@ public class V2Controller {
 
     public void setPrimaryVisulaEffect(long done,long total){
         Platform.runLater(()->{
-            System.out.println("HERE U AN");
             if(total>toMB){
                 v2donelable.setText(new DecimalFormat("#0.00").format((double) done / toMB));
             }
@@ -231,15 +240,31 @@ public class V2Controller {
             v2mb_kb_label.setText("-");
             v2pbar.setProgress(0);
             v2pindicator.setProgress(0);
+            v2filenamelabel.setText("-");
         });
 
     }
 
-    public void errorMessage(String s)
+    public void showMessage(String header, String details, Alert.AlertType f)
     {
         Platform.runLater(()->{
-            v2loglist.getItems().add(s);
+            Alert dialog = new Alert(f);
+            dialog.setHeaderText(header);
+            dialog.setContentText(details);
+            dialog.setResizable(false);
+            dialog.getDialogPane().setPrefSize(270,220);
+            dialog.showAndWait();
         });
+    }
+
+    public void changeSendStopButtonStates()
+    {
+        if(v2send.isDisable())v2send.setDisable(false);
+        else v2send.setDisable(true);
+        if(v2stop.isDisable())v2stop.setDisable(false);
+        else v2stop.setDisable(true);
+        if(v2remove.isDisable())v2remove.setDisable(false);
+        else v2remove.setDisable(true);
     }
 
 
