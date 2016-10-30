@@ -9,8 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,13 +19,13 @@ public class Main extends Application {
 
     private static Logger logger=Logger.getLogger(Main.class.getName());
     private static final String logmsg="Exception in main.Main.class ";
-    private static File stateFile=new File("STATEFILE");
+    private static String stateFile="STATE_FILE";
 
     private Stage primaryStage=null;
 
-    private V1Controller v1Controller=null;
-    private V2Controller v2Controller=null;
-    private V3Controller v3Controller=null;
+    private static V1Controller v1Controller=null;
+    private static V2Controller v2Controller=null;
+    private static V3Controller v3Controller=null;
 
     private Scene v1Scene=null;
     private Scene v2Scene=null;
@@ -111,18 +110,40 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         this.ConfigLog();
         this.loadFXML();
-        if(stateFile.exists()){
-
-        }
 
         this.primaryStage=primaryStage;
         primaryStage.setScene(v1Scene);
         primaryStage.show();
     }
 
+    static void saveStates() throws IOException {
+        File f=new File(stateFile);
+        if(!f.exists())f.createNewFile();
+        BufferedWriter writer=new BufferedWriter(new FileWriter(f));
+        writer.write(v2Controller.getInitDir().getAbsolutePath());
+        writer.write(v3Controller.getDefaultSavePath().getAbsolutePath());
+        writer.close();
+    }
 
-    public static void main(String[] args) {
+    static void loadStates() throws IOException {
+        File f=new File(stateFile);
+        if(!f.exists()){
+            f.createNewFile();
+            return;
+        }
+        BufferedReader reader=new BufferedReader(new FileReader(f));
+        String s=reader.readLine();
+        System.out.println(s);
+        s=reader.readLine();
+        System.out.println(s);
+        reader.close();
+    }
+
+
+
+    public static void main(String[] args) throws IOException {
         launch(args);
+        saveStates();
         System.exit(0);
     }
 }
