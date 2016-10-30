@@ -39,11 +39,6 @@ public class V1Controller {
     @FXML
     private BorderPane v1bp;
 
-    @FXML
-    void SettingsAction(MouseEvent event) {
-        if(cm.isShowing())cm.hide();
-        else cm.show(v1settings,event.getScreenX(),event.getScreenY());
-    }
 
     @FXML
     void AboutAction(ActionEvent event) {
@@ -116,6 +111,11 @@ public class V1Controller {
             if(Main.initDir!=null)chooser.setInitialDirectory(Main.initDir.getAbsoluteFile());
             File f=chooser.showDialog(main.getPrimaryStage());
             if(f!=null)main.setInitialDirectory(f);
+        });
+
+        v1settings.setOnMouseClicked(event -> {
+            if(cm.isShowing())cm.hide();
+            else cm.show(v1settings,event.getScreenX(),event.getScreenY());
         });
 
         logger.log(Level.INFO,"fxml1 successfully initiated "+new Date().toString());
