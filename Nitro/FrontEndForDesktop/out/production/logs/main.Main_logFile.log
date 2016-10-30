@@ -1,24 +1,16 @@
-Oct 30, 2016 3:20:03 PM main.Main loadFXML
-INFO: Session started on: Sun Oct 30 15:20:03 BDT 2016
-Oct 30, 2016 3:20:03 PM main.Main loadFXML
+Oct 30, 2016 3:35:58 PM main.Main loadFXML
+INFO: Session started on: Sun Oct 30 15:35:58 BDT 2016
+Oct 30, 2016 3:35:58 PM main.Main loadFXML
 INFO:  Successfully loaded FXMLS
-Oct 30, 2016 3:20:03 PM main.Main loadStates
-INFO: Initial and save dirs successfully loaded
-Oct 30, 2016 3:20:09 PM main.Main main
-INFO: Session ending on Sun Oct 30 15:20:09 BDT 2016
-Oct 30, 2016 3:27:45 PM main.Main loadFXML
-INFO: Session started on: Sun Oct 30 15:27:45 BDT 2016
-Oct 30, 2016 3:27:45 PM main.Main loadFXML
+Oct 30, 2016 3:35:58 PM main.Main helperLoad
+INFO: Initial and save dirs reset
+Oct 30, 2016 3:42:28 PM main.Main main
+INFO: Session ending on Sun Oct 30 15:42:28 BDT 2016
+Oct 30, 2016 3:55:03 PM main.Main loadFXML
+INFO: Session started on: Sun Oct 30 15:55:03 BDT 2016
+Oct 30, 2016 3:55:03 PM main.Main loadFXML
 INFO:  Successfully loaded FXMLS
-Oct 30, 2016 3:27:45 PM main.Main loadStates
+Oct 30, 2016 3:55:03 PM main.Main loadStates
 INFO: Initial and save dirs successfully loaded
-Oct 30, 2016 3:28:05 PM main.Main main
-INFO: Session ending on Sun Oct 30 15:28:05 BDT 2016
-Oct 30, 2016 3:32:13 PM main.Main loadFXML
-INFO: Session started on: Sun Oct 30 15:32:13 BDT 2016
-Oct 30, 2016 3:32:13 PM main.Main loadFXML
-INFO:  Successfully loaded FXMLS
-Oct 30, 2016 3:32:13 PM main.Main loadStates
-INFO: Initial and save dirs successfully loaded
-Oct 30, 2016 3:32:23 PM main.Main main
-INFO: Session ending on Sun Oct 30 15:32:23 BDT 2016
+Oct 30, 2016 3:55:08 PM main.Main main
+INFO: Session ending on Sun Oct 30 15:55:08 BDT 2016

@@ -1,0 +1,22 @@
+Oct 30, 2016 3:38:21 PM coreJava.ClientPackage.Client <init>
+INFO: Client session started on Sun Oct 30 15:38:21 BDT 2016
+Oct 30, 2016 3:38:21 PM coreJava.ClientPackage.Client run
+INFO: Selected ServerAddress 192.168.0.104
+Oct 30, 2016 3:38:21 PM coreJava.ClientPackage.Client processAndSend
+INFO: Server Response : requesting total file numbers...
+Oct 30, 2016 3:38:21 PM coreJava.ClientPackage.Client processAndSend
+INFO: Server Response : Will receive 1 file(s)
+Oct 30, 2016 3:38:21 PM coreJava.ClientPackage.Client processAndSend
+INFO: Sending file....[anon] Yahari Ore no Seishun Love Comedy wa Machigatteiru. Zoku OVA [1080p].mkv
+Oct 30, 2016 3:38:21 PM coreJava.ClientPackage.Client processAndSend
+INFO: Server Response : received name [anon] Yahari Ore no Seishun Love Comedy wa Machigatteiru. Zoku OVA [1080p].mkv 340053284
+Oct 30, 2016 3:38:55 PM coreJava.ClientPackage.Client processAndSend
+INFO: Server Response : File 1 received 340053284 bytes
+Oct 30, 2016 3:38:55 PM coreJava.ClientPackage.Client processAndSend
+INFO: [anon] Yahari Ore no Seishun Love Comedy wa Machigatteiru. Zoku OVA [1080p].mkv sent
+Oct 30, 2016 3:38:55 PM coreJava.ClientPackage.Client processAndSend
+INFO: total time taken to send file: 33.572
+Oct 30, 2016 3:38:55 PM coreJava.ClientPackage.Client processAndSend
+INFO: total sent in MB: 324.3000831604004
+Oct 30, 2016 3:38:55 PM coreJava.ClientPackage.Client run
+INFO: Session closed at Sun Oct 30 15:38:55 BDT 2016

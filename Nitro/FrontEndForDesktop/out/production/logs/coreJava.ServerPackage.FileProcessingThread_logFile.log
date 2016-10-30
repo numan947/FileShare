@@ -1,0 +1,7 @@
+Oct 30, 2016 3:41:35 PM coreJava.ServerPackage.FileProcessingThread receiveAndProcess
+INFO: receiving & processing session started Sun Oct 30 15:41:35 BDT 2016
+Oct 30, 2016 3:41:35 PM coreJava.ServerPackage.FileProcessingThread receiveAndProcess
+INFO: Client Response: 1
+Oct 30, 2016 3:41:37 PM coreJava.ServerPackage.FileProcessingThread run
+INFO: Successfully received 21.296975135803223 MB in 21.296975135803223 second(s)
+Session ended
