@@ -1,10 +1,17 @@
 package coreJava.ClientPackage;
 
 import Controller.V2Controller;
+import Controller.V3Controller;
 import javafx.scene.control.Alert;
+import main.Main;
 
 import java.io.*;
 import java.text.DecimalFormat;
+import java.util.Date;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Created by numan947 on 10/26/16.
@@ -19,14 +26,10 @@ public class Client implements Runnable {
     private String serverAddress=null;
     private NetworkUtil util=null;
 
-    //file transfer related
-    private String[]fileAddresses=null;
-    private String[]fileNames=null;
     private File[]files=null;
     private File selectedFile=null;
     private BufferedInputStream fbuff=null;
     private byte[]buff=null;
-    private char separator=File.separatorChar;
     private String encoding="UTF-8";
 
     //to add gui
@@ -35,17 +38,32 @@ public class Client implements Runnable {
     private boolean stop;
 
     //statistics flags
-    long startTime;
-    long totalTime;
-    long totalsize;
+    private long startTime;
+    private long totalsize;
+
+    private static Logger logger=null;
+    private void ConfigLog()
+    {
+        try {
+            logger=Logger.getLogger(Client.class.getName());
+            FileHandler fh=new FileHandler(Main.loggerDir+File.separator+Client.class.getName()+"_logFile.log",true);
+            SimpleFormatter formatter=new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public Client(V2Controller controller,String serverAddress,File[]files) {
 
+        this.ConfigLog();
+        this.logger.log(Level.INFO,"Client session started on "+new Date().toString());
         this.controller=controller;
         this.serverAddress=serverAddress;
         this.files=files;
-        System.out.println(files.length);
         this.buff=new byte[DEFAULT_BUFFER_SIZE];
         this.stop=false;
         this.thread=new Thread(this);
@@ -59,7 +77,7 @@ public class Client implements Runnable {
         try {
             return fbuff.read(buff);
         } catch (IOException e) {
-            System.out.println("Exception In ClientPackage.Client.getBuff "+e.getMessage());
+            logger.log(Level.SEVERE,"Problem while reading file "+new Date().toString());
         }
         return 0;
     }
@@ -75,17 +93,18 @@ public class Client implements Runnable {
             //how many file to send and response from server
             totalRead=util.readBuff(buff);
             if(totalRead!=-1) {
-                System.out.println(new String(buff, 0, totalRead, encoding));
+
+                logger.info("Server Response : "+new String(buff, 0, totalRead, encoding));
 
                 util.writeBuff(("" + files.length).getBytes(encoding));
                 totalRead = util.readBuff(buff);
 
                 if (totalRead != -1) {
-                    System.out.println(new String(buff, 0, totalRead, encoding));
+                    logger.info("Server Response : "+new String(buff, 0, totalRead, encoding));
 
                     for (int i = 0; i < files.length; i++) {
                         try {
-                            System.out.println("Sending File " + (i + 1) + "...");
+                            logger.info("Sending file...."+files[i].getName());
                             selectedFile = files[i];
                             fbuff = new BufferedInputStream(new FileInputStream(selectedFile),BUFFER_SIZE);
                             totalsize+=selectedFile.length();
@@ -96,9 +115,7 @@ public class Client implements Runnable {
                             totalRead = util.readBuff(buff);
                             if (totalRead != -1) {
                                 String msg = new String(buff, 0, totalRead, encoding);
-
-                                System.out.println(msg);
-
+                                logger.info("Server Response : "+msg);
                                 controller.setSecondaryVisualEffect(selectedFile.getName(),selectedFile.length());
 
                                 int tmpCt=0;
@@ -110,9 +127,10 @@ public class Client implements Runnable {
                                     try {
                                         util.writeBuff(buff, 0, totalRead);
                                     }catch (IOException e){
+                                        logger.log(Level.WARNING,"Connection ended by receiver "+new Date().toString(),e.getMessage());
                                         controller.changeSendStopButtonStates();
                                         controller.clearVisualEffect();
-                                        controller.showMessage("ERROR SENDING!!!","Reciever closed the connection!", Alert.AlertType.ERROR);
+                                        controller.showMessage("ERROR SENDING!!!","Receiver closed the connection!", Alert.AlertType.ERROR);
                                         stop=true;
                                         fbuff.close();
                                         return;
@@ -129,7 +147,6 @@ public class Client implements Runnable {
                                 fbuff.close();
 
                                 if(stop){
-                                    //TODO FIXIT
                                     controller.clearVisualEffect();
                                     controller.showMessage("SENDING INTERRUPTED!!","Did you just hit the stop button? "+selectedFile.getName()+" not sent", Alert.AlertType.WARNING);
                                     return;
@@ -142,35 +159,31 @@ public class Client implements Runnable {
                                 totalRead = util.readBuff(buff);
                                 if (totalRead != -1) {
                                     msg = new String(buff, 0, totalRead, encoding);
-
-                                    System.out.println(msg);
-//TODO cleanup these
-/*                                    System.out.println("File " + i + " sent in stream");
-                                    System.out.println("Time taken "+(System.currentTimeMillis()-ct)/1000);
-                                    ct=System.currentTimeMillis();*/
+                                    logger.info("Server Response : "+msg);
                                 }
                             }
                         } catch (IOException e) {
-                            System.out.println("Exception In ClientPackage.Client.processAndSend, iteration: " + i + " " + e.getMessage());
+                            logger.log(Level.WARNING,"Problem while sending file "+new Date().toString(),e.getMessage());
                         }
+                        logger.info(files[i].getName()+" sent");
                     }
                 }
                 totalRead = util.readBuff(buff);
-                if (totalRead != -1) System.out.println(new String(buff, 0, totalRead, encoding));
+                if (totalRead != -1)logger.info("Server Response : "+new String(buff, 0, totalRead, encoding));
             }
         } catch (UnsupportedEncodingException ee) {
             System.out.println("Exception In ClientPackage.Client.processAndSend "+ee.getMessage());
         }
-        System.out.println("total time taken to send file: "+(System.currentTimeMillis()-startTime)/1000.0);
-        System.out.println("total sent in MB: "+((double)totalsize/(1024*1024)));
+        logger.log(Level.INFO,"total time taken to send file: "+(System.currentTimeMillis()-startTime)/1000.0);
+        logger.log(Level.INFO,"total sent in MB: "+((double)totalsize/(1024*1024)));
     }
 
 
 
     @Override
     public void run() {
-        //TODO remove
-        System.out.println(port+" GOT "+ serverAddress);
+
+        logger.info("Selected ServerAddress "+serverAddress);
         try {
             this.util = new NetworkUtil(serverAddress, port);
 
@@ -182,7 +195,6 @@ public class Client implements Runnable {
         }
 
         if(stop){
-            System.out.println("BREAKING THREAD");
             util.closeAll();
             return;
         }
@@ -190,7 +202,7 @@ public class Client implements Runnable {
         this.processAndSend();
 
         if(stop){
-            System.out.println("BREAKING THREAD");
+            logger.log(Level.WARNING,"Connection closed by sender "+new Date().toString());
             util.closeAll();
             return;
         }
@@ -201,6 +213,7 @@ public class Client implements Runnable {
         controller.showMessage("SUCCESS!!","You sent "+new DecimalFormat("#0.000").format(sentInMB)+" MB in "+new DecimalFormat("#0.000").format(timetaken)+" second(s)", Alert.AlertType.INFORMATION);
         controller.changeSendStopButtonStates();
         util.closeAll();
+        logger.info("Session closed at "+new Date().toString());
     }
 
     public void setStop(boolean stop) {

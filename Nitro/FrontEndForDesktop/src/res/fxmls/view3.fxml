@@ -71,7 +71,7 @@
    <right>
       <VBox alignment="TOP_CENTER" spacing="3.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="v3ipaddress" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="183.0" text="Your Address" textAlignment="CENTER">
+            <Label fx:id="v3ipAddress" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="183.0" text="Your Address" textAlignment="CENTER">
                <font>
                   <Font name="System Bold" size="21.0" />
                </font>
@@ -102,7 +102,7 @@
       </VBox>
    </right>
    <center>
-      <ListView fx:id="v3recievelist" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="237.0" prefWidth="270.0" BorderPane.alignment="CENTER" />
+      <ListView fx:id="v3receiveList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="237.0" prefWidth="270.0" BorderPane.alignment="CENTER" />
    </center>
 
 

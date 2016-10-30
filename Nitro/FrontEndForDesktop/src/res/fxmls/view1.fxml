@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
+<?import javafx.scene.text.Font?>
 <BorderPane fx:id="v1bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.V1Controller">
    <top>
       <Label alignment="CENTER" prefHeight="75.0" prefWidth="318.0" text="APP_NAME" textAlignment="CENTER" textFill="#2c09e5a8" BorderPane.alignment="CENTER">
@@ -22,7 +20,7 @@
                   <Font size="27.0" />
                </font>
             </Button>
-            <Button fx:id="v1recieve" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#RecieveAction" prefHeight="54.0" prefWidth="184.0" text="RECIEVE" textFill="#da1616">
+            <Button fx:id="v1receive" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#RecieveAction" prefHeight="54.0" prefWidth="184.0" text="RECIEVE" textFill="#da1616">
                <font>
                   <Font size="27.0" />
                </font>

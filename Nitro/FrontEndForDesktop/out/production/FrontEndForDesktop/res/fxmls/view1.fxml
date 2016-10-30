@@ -22,7 +22,7 @@
                   <Font size="27.0" />
                </font>
             </Button>
-            <Button fx:id="v1recieve" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#RecieveAction" prefHeight="54.0" prefWidth="184.0" text="RECIEVE" textFill="#da1616">
+            <Button fx:id="v1receive" layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#RecieveAction" prefHeight="54.0" prefWidth="184.0" text="RECIEVE" textFill="#da1616">
                <font>
                   <Font size="27.0" />
                </font>

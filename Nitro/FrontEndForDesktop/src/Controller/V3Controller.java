@@ -1,14 +1,18 @@
 package Controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.Enumeration;
-import java.util.ResourceBundle;
 import java.util.Vector;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import coreJava.ServerPackage.Server;
 import javafx.application.Platform;
@@ -36,19 +40,13 @@ public class V3Controller {
     }
 
     @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
-
-    @FXML
-    private ListView<File>v3recievelist;
+    private ListView<File> v3receiveList;
 
     @FXML
     private Button v3remove;
 
     @FXML
-    private Label v3ipaddress;
+    private Label v3ipAddress;
 
     @FXML
     private Label v3total_label;
@@ -80,29 +78,44 @@ public class V3Controller {
     @FXML
     private Button v3stop;
 
+    private static Logger logger=null;
+    private void ConfigLog()
+    {
+        try {
+            logger=Logger.getLogger(V3Controller.class.getName());
+            FileHandler fh=new FileHandler(Main.loggerDir+File.separator+V3Controller.class.getName()+"_logFile.log",true);
+            SimpleFormatter formatter=new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     void startAction(ActionEvent event) {
         findIP();
-        this.v3ipaddress.setText(this.ipAddress);
+        this.v3ipAddress.setText(this.ipAddress);
 
         server=new Server(this,defaultSavePath.getAbsolutePath());
-        System.out.println("HELL");
+        logger.log(Level.INFO,"Firing up the server "+new Date().toString());
         this.changeStartStopButtonStates();
     }
 
     @FXML
     void stopAction(ActionEvent event) {
         if(server!=null){
+            logger.log(Level.INFO,"Shutting down server on "+new Date().toString());
             server.shutdownServer();
             server=null;
         }
-        System.out.println("HELL");
+
         this.changeStartStopButtonStates();
     }
 
     @FXML
     void removeAction(ActionEvent event) {
-        this.v3recievelist.getItems().removeAll(v3recievelist.getSelectionModel().getSelectedItems());
+        this.v3receiveList.getItems().removeAll(v3receiveList.getSelectionModel().getSelectedItems());
     }
 
     @FXML
@@ -112,9 +125,9 @@ public class V3Controller {
 
     @FXML
     void initialize() {
-        assert v3recievelist != null : "fx:id=\"v3recievelist\" was not injected: check your FXML file 'view3.fxml'.";
+        assert v3receiveList != null : "fx:id=\"v3receiveList\" was not injected: check your FXML file 'view3.fxml'.";
         assert v3remove != null : "fx:id=\"v3delete\" was not injected: check your FXML file 'view3.fxml'.";
-        assert v3ipaddress != null : "fx:id=\"v3ipaddress\" was not injected: check your FXML file 'view3.fxml'.";
+        assert v3ipAddress != null : "fx:id=\"v3ipAddress\" was not injected: check your FXML file 'view3.fxml'.";
         assert v3total_label != null : "fx:id=\"v3total_label\" was not injected: check your FXML file 'view3.fxml'.";
         assert v3filename_label != null : "fx:id=\"v3filename_label\" was not injected: check your FXML file 'view3.fxml'.";
         assert v3done_label != null : "fx:id=\"v3done_label\" was not injected: check your FXML file 'view3.fxml'.";
@@ -126,14 +139,17 @@ public class V3Controller {
         assert v3pindicator != null : "fx:id=\"v3pindicator\" was not injected: check your FXML file 'view3.fxml'.";
         assert v3stop != null : "fx:id=\"v3stop\" was not injected: check your FXML file 'view3.fxml'.";
 
+        this.ConfigLog();
+
         //setting up initial states
-        this.v3recievelist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        this.v3receiveList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         v3stop.setDisable(true);
         clearVisualEffect();
         v3bp.requestFocus();
         v3bp.setOnMouseClicked(event -> {
             v3bp.requestFocus();
         });
+        logger.log(Level.INFO,"Initial setup completed");
 
 
 
@@ -168,12 +184,12 @@ public class V3Controller {
                 }
             }
         } catch (SocketException e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING,"Problem in NetworkInterfaces "+new Date().toString());
         }
         this.ipAddress="NO_NETWORK";
 
         for(String s:addresses){
-            System.out.println(s);
+
             if(s.matches("10\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])")){
                 this.ipAddress=s;
                 break;
@@ -193,7 +209,7 @@ public class V3Controller {
     public synchronized void updateFileList(File f)
     {
         Platform.runLater(()->{
-            this.v3recievelist.getItems().add(f);
+            this.v3receiveList.getItems().add(f);
         });
     }
 

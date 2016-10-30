@@ -13,10 +13,15 @@ import javafx.stage.FileChooser;
 import main.Main;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 public class V2Controller {
@@ -32,12 +37,6 @@ public class V2Controller {
 
     private FileChooser fileChooser=null;
 
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
 
     @FXML
     private Label v2filenamelabel;
@@ -85,6 +84,21 @@ public class V2Controller {
     private ListView <File> v2filelist;
 
 
+    private static Logger logger=null;
+    private void ConfigLog()
+    {
+        try {
+            logger=Logger.getLogger(V2Controller.class.getName());
+            FileHandler fh=new FileHandler(Main.loggerDir+File.separator+V3Controller.class.getName()+"_logFile.log",true);
+            SimpleFormatter formatter=new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public File getInitDir() {
         return InitDir;
     }
@@ -96,6 +110,7 @@ public class V2Controller {
     @FXML
     void selectFile(ActionEvent event) {
         if(fileChooser==null)fileChooser=new FileChooser();
+        fileChooser.setTitle("Select files to send");
         if(InitDir!=null)fileChooser.setInitialDirectory(InitDir);
         List<File> ff =fileChooser.showOpenMultipleDialog(main.getPrimaryStage());
         if(ff!=null) {
@@ -126,6 +141,7 @@ public class V2Controller {
         if(!valid||list.isEmpty()){
             this.showMessage("ERROR!! PARAMETERS DON'T MATCH","Is the list empty? Or is the address invalid?", Alert.AlertType.ERROR);
             event.consume();
+            logger.log(Level.WARNING,"Invalid arguments while sending files");
             return;
         }
 
@@ -135,11 +151,7 @@ public class V2Controller {
         File[]ff=new File[list.size()];
         list.toArray(ff);
 
-        //TODO remove this
-        for(int i=0;i<ff.length;i++) System.out.println(ff[i].getName());
-
         if(ff.length>0&&v2destaddress.toString()!=null){
-            System.out.println(v2destaddress.getText());
             client=new Client(this,v2destaddress.getText(),ff);
         }
     }
@@ -176,7 +188,7 @@ public class V2Controller {
         assert v2loglist != null : "fx:id=\"v2loglist\" was not injected: check your FXML file 'view2.fxml'.";
         assert v2bp != null : "fx:id=\"v2bp\" was not injected: check your FXML file 'view2.fxml'.";
         assert v2totallabel != null : "fx:id=\"v2totallabel\" was not injected: check your FXML file 'view2.fxml'.";
-
+        this.ConfigLog();
 
         this.v2filelist.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         v2bp.requestFocus();
@@ -215,7 +227,6 @@ public class V2Controller {
         Platform.runLater(() -> {
             v2loglist.getItems().add("Sent: "+f.getName());
             v2filelist.getItems().remove(f);
-            System.out.println(v2filelist.getItems().size());
             if(v2filelist.getItems().size()==0)v2remove.setDisable(false);
         });
     }

@@ -1,31 +1,28 @@
 package Controller;
 
-import java.awt.*;
-import java.io.File;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
 import main.Main;
 
-public class V1Controller {
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
+public class V1Controller {
+    private static Logger logger=null;
 
     private ContextMenu cm;
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
 
     @FXML
     private Button v1about;
@@ -37,19 +34,25 @@ public class V1Controller {
     private Button v1settings;
 
     @FXML
-    private Button v1recieve;
+    private Button v1receive;
 
     @FXML
     private BorderPane v1bp;
 
     @FXML
-    void SettingsAction(ActionEvent event) {
-
+    void SettingsAction(MouseEvent event) {
+        if(cm.isShowing())cm.hide();
+        else cm.show(v1settings,event.getScreenX(),event.getScreenY());
     }
 
     @FXML
     void AboutAction(ActionEvent event) {
-
+        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
+        dialog.setHeaderText("CREDITS");
+        dialog.setContentText("This is prepared by S.Mahmudul Hasan\nBUET batch'13, Level 3/ Term 1\nRoll:1305043\nas a side project :)");
+        dialog.setResizable(false);
+        dialog.getDialogPane().setPrefSize(270,220);
+        dialog.showAndWait();
     }
 
     @FXML
@@ -67,46 +70,55 @@ public class V1Controller {
         this.main = main;
     }
 
+    private void ConfigLog()
+    {
+        try {
+            logger=Logger.getLogger(V1Controller.class.getName());
+            FileHandler fh=new FileHandler(Main.loggerDir+File.separator+V1Controller.class.getName()+"_logFile.log",true);
+            SimpleFormatter formatter=new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.addHandler(fh);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     void initialize() {
         assert v1about != null : "fx:id=\"v1about\" was not injected: check your FXML file 'view1.fxml'.";
         assert v1send != null : "fx:id=\"v1send\" was not injected: check your FXML file 'view1.fxml'.";
         assert v1settings != null : "fx:id=\"v1settings\" was not injected: check your FXML file 'view1.fxml'.";
-        assert v1recieve != null : "fx:id=\"v1recieve\" was not injected: check your FXML file 'view1.fxml'.";
+        assert v1receive != null : "fx:id=\"v1receive\" was not injected: check your FXML file 'view1.fxml'.";
         assert v1bp != null : "fx:id=\"v1bp\" was not injected: check your FXML file 'view1.fxml'.";
+
+        this.ConfigLog();
+
         v1bp.requestFocus();
         v1bp.setOnMouseClicked(event -> {
             v1bp.requestFocus();
         });
 
-        v1about.setOnAction(event -> {
-            Alert dialog = new Alert(Alert.AlertType.INFORMATION);
-            dialog.setHeaderText("CREDITS");
-            dialog.setContentText("This is prepared by S.Mahmudul Hasan\nBUET batch'13, Level 3/ Term 1\nRoll:1305043\nas a side project :)");
-            dialog.setResizable(false);
-            dialog.getDialogPane().setPrefSize(270,220);
-            dialog.showAndWait();
-        });
 
         cm=new ContextMenu();
-        MenuItem changeDest=new MenuItem("Change Destination Folder (RecieverSide)");
+        MenuItem changeDest=new MenuItem("Change Destination Folder (ReceiverSide)");
         MenuItem changeSrc=new MenuItem("Change Initial Directory (SenderSide)");
         cm.getItems().addAll(changeDest,changeSrc);
         changeDest.setOnAction(event -> {
             DirectoryChooser chooser=new DirectoryChooser();
+            chooser.setTitle("Select default destination");
+            if(Main.saveDir!=null)chooser.setInitialDirectory(Main.saveDir.getAbsoluteFile());
             File f=chooser.showDialog(main.getPrimaryStage());
-            main.setDestDirectory(f);
+            if(f!=null)main.setDestDirectory(f);
         });
         changeSrc.setOnAction(event->{
             DirectoryChooser chooser=new DirectoryChooser();
+            chooser.setTitle("Select default initial directory");
+            if(Main.initDir!=null)chooser.setInitialDirectory(Main.initDir.getAbsoluteFile());
             File f=chooser.showDialog(main.getPrimaryStage());
-            main.setInitialDirectory(f);
+            if(f!=null)main.setInitialDirectory(f);
         });
 
-        v1settings.setOnMouseClicked(event -> {
-            if(cm.isShowing())cm.hide();
-            else cm.show(v1settings,event.getScreenX(),event.getScreenY());
-        });
+        logger.log(Level.INFO,"fxml1 successfully initiated "+new Date().toString());
 
 
     }
