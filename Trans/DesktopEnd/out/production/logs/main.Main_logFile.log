@@ -50,3 +50,33 @@ Nov 01, 2016 12:12:29 AM main.Main loadStates
 INFO: Initial and save dirs successfully loaded
 Nov 01, 2016 12:12:35 AM main.Main main
 INFO: Session ending on Tue Nov 01 00:12:35 BDT 2016
+Nov 01, 2016 12:17:29 AM main.Main loadFXML
+INFO: Session started on: Tue Nov 01 00:17:29 BDT 2016
+Nov 01, 2016 12:17:29 AM main.Main loadFXML
+INFO:  Successfully loaded FXMLS
+Nov 01, 2016 12:17:29 AM main.Main loadStates
+INFO: Initial and save dirs successfully loaded
+Nov 01, 2016 12:18:38 AM main.Main loadFXML
+INFO: Session started on: Tue Nov 01 00:18:38 BDT 2016
+Nov 01, 2016 12:18:38 AM main.Main loadFXML
+INFO:  Successfully loaded FXMLS
+Nov 01, 2016 12:18:38 AM main.Main loadStates
+INFO: Initial and save dirs successfully loaded
+Nov 01, 2016 12:18:50 AM main.Main main
+INFO: Session ending on Tue Nov 01 00:18:50 BDT 2016
+Nov 01, 2016 12:18:58 AM main.Main loadFXML
+INFO: Session started on: Tue Nov 01 00:18:58 BDT 2016
+Nov 01, 2016 12:18:58 AM main.Main loadFXML
+INFO:  Successfully loaded FXMLS
+Nov 01, 2016 12:18:58 AM main.Main loadStates
+INFO: Initial and save dirs successfully loaded
+Nov 01, 2016 12:19:14 AM main.Main main
+INFO: Session ending on Tue Nov 01 00:19:14 BDT 2016
+Nov 01, 2016 12:22:13 AM main.Main loadFXML
+INFO: Session started on: Tue Nov 01 00:22:13 BDT 2016
+Nov 01, 2016 12:22:13 AM main.Main loadFXML
+INFO:  Successfully loaded FXMLS
+Nov 01, 2016 12:22:13 AM main.Main loadStates
+INFO: Initial and save dirs successfully loaded
+Nov 01, 2016 12:22:23 AM main.Main main
+INFO: Session ending on Tue Nov 01 00:22:23 BDT 2016

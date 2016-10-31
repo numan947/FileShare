@@ -44,9 +44,13 @@ public class V1Controller {
     void AboutAction(ActionEvent event) {
         Alert dialog = new Alert(Alert.AlertType.INFORMATION);
         dialog.setHeaderText("CREDITS");
-        dialog.setContentText("This is prepared by S.Mahmudul Hasan\nBUET batch'13, Level 3/ Term 1\nRoll:1305043\nas a side project :)");
+        dialog.setContentText("This application is made by S.Mahmudul Hasan, Roll: 1305043," +
+                " current student of Bangladesh University Of Engineering and Technology," +
+                " as a side project. Few open source libraries (especially a filechooser library) were used to build this application." +
+                "Now while we're at it, the naming credit goes to none other than Akib Ahmed (1305074), aka Akibbai. " +
+                "Thanks to him, this application has been given a nice name.");
         dialog.setResizable(false);
-        dialog.getDialogPane().setPrefSize(270,220);
+        dialog.getDialogPane().setPrefSize(350,300);
         dialog.showAndWait();
     }
 
