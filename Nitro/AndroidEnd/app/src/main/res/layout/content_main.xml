@@ -24,8 +24,8 @@
         android:id="@+id/receive_button"
         android:layout_width="250dp"
         android:layout_height="66dp"
-        android:layout_below="@+id/send_button"
-        android:layout_alignStart="@+id/send_button"
+        android:layout_below="@+id/stop_server_btn"
+        android:layout_alignStart="@+id/stop_server_btn"
         android:onClick="selectReceive"/>
 
     <Button
@@ -35,7 +35,7 @@
         android:textColor="#4527a0"
         android:textAlignment="center"
         android:layout_marginTop="110dp"
-        android:id="@+id/send_button"
+        android:id="@+id/stop_server_btn"
         android:layout_width="250dp"
         android:layout_height="66dp"
         android:layout_alignParentTop="true"

@@ -13,12 +13,13 @@
     tools:context="com.example.numan947.androidend.ClientActivity"
     android:orientation="vertical"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:descendantFocusability="beforeDescendants">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:id="@+id/linearLayout"
@@ -35,7 +36,10 @@
             android:layout_margin="1dp"
             android:layout_weight=".5"
             android:textColor="#FFFFFF"
-            android:textSize="15.5sp"/>
+            android:textSize="15.5sp"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"/>
 
         <TextView
             android:text="File Name"
@@ -46,7 +50,10 @@
             android:textColor="#FFFFFF"
             android:textSize="15.5sp"
             android:padding="1dp"
-            android:layout_margin="1dp"/>
+            android:layout_margin="1dp"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"/>
 
         <TextView
             android:text="Done"
@@ -58,7 +65,10 @@
             android:textColor="#FFFFFF"
             android:textSize="15.5sp"
             android:padding="1dp"
-            android:layout_margin="1dp"/>
+            android:layout_margin="1dp"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"/>
 
         <TextView
             android:text="/total"
@@ -69,14 +79,20 @@
             android:textColor="#FFFFFF"
             android:textSize="15.5sp"
             android:padding="1dp"
-            android:layout_margin="1dp"/>
+            android:layout_margin="1dp"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"/>
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/pbar"
-            android:layout_weight=".5"/>
+            android:layout_weight=".5"
+            android:focusableInTouchMode="true"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"/>
 
     </LinearLayout>
 
@@ -90,45 +106,50 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_marginTop="3dp"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
         android:layout_weight="10"/>
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:digits="0123456789."
         android:inputType="numberDecimal"
         android:hint="Receiver's Address"
         android:ems="10"
-        android:layout_marginTop="10dp"
+        android:paddingTop="10dp"
         android:id="@+id/address"
         android:layout_below="@+id/listView_client"
         android:layout_centerHorizontal="true"
-        android:layout_weight="1"/>
+        android:layout_weight="2"
+        android:selectAllOnFocus="true"
+        android:textColor="#FFFFFF"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:layout_weight="2">
 
         <Button
             android:text="Select Files"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/select_files_button"
             android:gravity="center"
             android:background="#616161"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:onClick="selectFile"/>
 
 
             <Button
                 android:text="Send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/send_button"
+                android:id="@+id/stop_server_btn"
                 android:background="#616161"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:onClick="sendFile"/>
 
             <Button
                 android:text="Stop"
@@ -136,7 +157,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/stop_button"
                 android:background="#616161"
-                android:layout_margin="5dp"/>
+                android:layout_margin="5dp"
+                android:onClick="stopSending"/>
 
     </LinearLayout>
 

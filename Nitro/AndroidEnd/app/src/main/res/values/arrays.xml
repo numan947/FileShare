@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="context_menu">
+        <item>Delete</item>
+        <item>Show Path</item>
+    </string-array>
+</resources>
