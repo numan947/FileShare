@@ -42,3 +42,11 @@ Oct 31, 2016 11:44:23 PM main.Main loadStates
 INFO: Initial and save dirs successfully loaded
 Oct 31, 2016 11:46:17 PM main.Main main
 INFO: Session ending on Mon Oct 31 23:46:17 BDT 2016
+Nov 01, 2016 12:12:29 AM main.Main loadFXML
+INFO: Session started on: Tue Nov 01 00:12:29 BDT 2016
+Nov 01, 2016 12:12:29 AM main.Main loadFXML
+INFO:  Successfully loaded FXMLS
+Nov 01, 2016 12:12:29 AM main.Main loadStates
+INFO: Initial and save dirs successfully loaded
+Nov 01, 2016 12:12:35 AM main.Main main
+INFO: Session ending on Tue Nov 01 00:12:35 BDT 2016

@@ -10,7 +10,7 @@
 
 <BorderPane fx:id="v1bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.V1Controller">
    <top>
-      <Label alignment="CENTER" prefHeight="75.0" prefWidth="318.0" text="APP_NAME" textAlignment="CENTER" textFill="#2c09e5a8" BorderPane.alignment="CENTER">
+      <Label alignment="CENTER" prefHeight="75.0" prefWidth="318.0" text="TRANS" textAlignment="CENTER" textFill="#2c09e5a8" BorderPane.alignment="CENTER">
          <font>
             <Font size="41.0" />
          </font>

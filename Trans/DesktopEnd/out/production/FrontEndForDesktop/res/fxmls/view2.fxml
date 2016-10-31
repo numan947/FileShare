@@ -100,7 +100,7 @@
                </font>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <Label alignment="CENTER" prefHeight="75.0" prefWidth="294.0" text="APP_NAME" textAlignment="CENTER" textFill="#2c09e5a8">
+            <Label alignment="CENTER" prefHeight="75.0" prefWidth="294.0" text="TRANS" textAlignment="CENTER" textFill="#2c09e5a8">
                <font>
                   <Font size="41.0" />
                </font>
