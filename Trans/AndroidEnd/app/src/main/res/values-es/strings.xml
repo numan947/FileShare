@@ -14,5 +14,5 @@
     <string name="New">Nueva carpeta</string>
     <string name="CNew">Introducir nombre de Nueva carpeta</string>
     <string name="create">Crear</string>
-
+    <string name="context_menu">don\'t care</string>
 </resources>

@@ -14,6 +14,7 @@
     <string name="New">مجلد جديد</string>
     <string name="CNew">أدخل اسم المجلد الجديد</string>
     <string name="create">إنشاء</string>
+    <string name="context_menu">don\'t care</string>
 
 
 </resources>

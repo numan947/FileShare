@@ -14,6 +14,6 @@
     <string name="New">Neuer Ordner</string>
     <string name="CNew">Geben Sie einen neuen Ordner-Namen ein</string>
     <string name="create">Erstellen</string>
-
+    <string name="context_menu">don\'t care</string>
 
 </resources>

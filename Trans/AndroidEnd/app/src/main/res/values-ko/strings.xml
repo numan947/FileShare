@@ -14,6 +14,6 @@
     <string name="New">새 폴더</string>
     <string name="CNew">새 폴더 이름 입력</string>
     <string name="create">생성</string>
-
+    <string name="context_menu">don\'t care</string>
 
 </resources>

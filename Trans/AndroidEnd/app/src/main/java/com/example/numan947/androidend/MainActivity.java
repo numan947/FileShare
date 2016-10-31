@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             builder1.setMessage("This application is made by S.Mahmudul Hasan, Roll: 1305043," +
                     " current student of Bangladesh University Of Engineering and Technology," +
                     " as a side project. Few open source libraries (especially a filechooser library) were used to build this application." +
-                    "Now while we're at it, the naming credit goes to none other than Akib Ahmed (1305074) aka Akibbai" +
+                    "Now while we're at it, the naming credit goes to none other than Akib Ahmed (1305074) aka Akibbai. " +
                     "Thanks to him, this application has been given a nice name.");
 
             builder1.setPositiveButton(

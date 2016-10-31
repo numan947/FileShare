@@ -14,6 +14,6 @@
     <string name="New">新規フォルダ</string>
     <string name="CNew">新しいフォルダ名を入力</string>
     <string name="create">作成</string>
-
+    <string name="context_menu">don\'t care</string>
 
 </resources>

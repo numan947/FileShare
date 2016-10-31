@@ -15,5 +15,5 @@
     <string name="CNew">Ввести имя новой папки</string>
     <string name="create">Создать</string>
 
-
+    <string name="context_menu">don\'t care</string>
 </resources>

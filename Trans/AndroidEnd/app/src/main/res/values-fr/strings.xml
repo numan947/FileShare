@@ -14,5 +14,5 @@
     <string name="New">Nouveau dossier</string>
     <string name="CNew">Saisissez le nouveau nom de dossier</string>
     <string name="create">Créer</string>
-
+    <string name="context_menu">don\'t care</string>
 </resources>

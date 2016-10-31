@@ -14,6 +14,6 @@
     <string name="New">Folder Baru</string>
     <string name="CNew">Masukkan Nama Folder Baru</string>
     <string name="create">Buat</string>
-
+    <string name="context_menu">don\'t care</string>
 
 </resources>
