@@ -300,6 +300,8 @@ public class V2Controller {
         else v2filelist.setDisable(true);
         if(v2send.isDisable())v2back.setDisable(true);
         else v2back.setDisable(false);
+        if(v2selectfile.isDisable())v2selectfile.setDisable(false);
+        else v2selectfile.setDisable(true);
     }
 
 

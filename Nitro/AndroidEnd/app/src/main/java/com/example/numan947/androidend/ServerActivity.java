@@ -75,7 +75,7 @@ public class ServerActivity extends AppCompatActivity {
         stopButton.setEnabled(false);
 
         //todo change this
-        this.defaultDir= Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"THIS IS SPARTA";
+        this.defaultDir= Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"Trans";
         File file=new File(defaultDir);
         if(!file.exists())file.mkdirs();
 

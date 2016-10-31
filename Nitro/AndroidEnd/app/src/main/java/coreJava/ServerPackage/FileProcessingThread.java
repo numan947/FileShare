@@ -23,8 +23,8 @@ import java.util.logging.SimpleFormatter;
  **/
 public class FileProcessingThread implements Runnable {
     //buffer related
-    private int NETWORK_BUFFER_SIZE=12000;
-    private int FILE_BUFFER_SIZE=36000;
+    private int NETWORK_BUFFER_SIZE=8192;
+    private int FILE_BUFFER_SIZE=8192;
 
     //server & network related
     private NetworkUtil util=null;
@@ -54,7 +54,7 @@ public class FileProcessingThread implements Runnable {
             logger=Logger.getLogger(FileProcessingThread.class.getName());
         FileHandler fh = null;
         try {
-            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG"+ File.separator+FileProcessingThread.class.getName()+"_logFile.log",true);
+            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"Trans"+File.separator+".LOG"+ File.separator+FileProcessingThread.class.getName()+"_logFile.log",true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -199,6 +199,18 @@ public class FileProcessingThread implements Runnable {
             }
         } catch (IOException e) {
             logger.log(Level.SEVERE,"Exception in serverpackage.FileProcessingThread ",e.getMessage());
+        }        final double dd=(double) totalreceived /(1024*1024);
+        if(!errorFlag) {
+            final double tt = (double) (System.currentTimeMillis() - startTime) / 1000;
+            final String host = util.getSocket().getInetAddress().getHostName();
+            controller.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    controller.showMessage("SUCCESS!!", "You received " + new DecimalFormat("#0.00").format(dd) + " in " + tt + " second(s) from " + host);
+                }
+            });
+            logger.log(Level.INFO,"Successfully received "+dd+" MB in "+dd+" second(s)\nSession ended");
+
         }
         controller.regenerateServer();
     }
@@ -208,19 +220,6 @@ public class FileProcessingThread implements Runnable {
     public void run() {
         this.receiveAndProcess();
         util.closeAll();
-        if(errorFlag)return;
-
-        final double dd=(double) totalreceived /(1024*1024);
-        final double tt=(double)(System.currentTimeMillis()-startTime)/1000;
-        final String host=util.getSocket().getInetAddress().getHostName();
-        controller.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                controller.showMessage("SUCCESS!!","You received "+new DecimalFormat("#0.00").format(dd)+" in "+tt+" second(s) from "+host);
-            }
-        });
-
-        logger.log(Level.INFO,"Successfully received "+dd+" MB in "+dd+" second(s)\nSession ended");
     }
 
     private void getFileNameAndSize(byte[] buff,int totalRead) {

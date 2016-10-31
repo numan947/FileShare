@@ -34,7 +34,7 @@ public class Server implements Runnable{
         logger=Logger.getLogger(Server.class.getName());
         FileHandler fh= null;
         try {
-            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG"+ File.separator+Server.class.getName()+"_logFile.log",true);
+            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"Trans"+File.separator+".LOG"+ File.separator+Server.class.getName()+"_logFile.log",true);
         } catch (IOException e) {
             e.printStackTrace();
         }

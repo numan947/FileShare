@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        File logDir=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG");
+        File logDir=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"Trans"+File.separator+".LOG");
         if(!logDir.exists())logDir.mkdirs();
     }
 
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.save_path) {
 
             builder1.setTitle("Save Path");
-            builder1.setMessage("Your received files are saved at "+Environment.getExternalStorageDirectory().getAbsolutePath());
+            builder1.setMessage("Your received files are saved at "+Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"Trans");
 
             builder1.setPositiveButton(
                     "OK",
@@ -66,9 +66,11 @@ public class MainActivity extends AppCompatActivity {
             alert11.show();
         }else if(id==R.id.about){
             builder1.setTitle("About This App");
-            builder1.setMessage("This application is prepared by S.Mahmudul Hasan, Roll: 1305043," +
+            builder1.setMessage("This application is made by S.Mahmudul Hasan, Roll: 1305043," +
                     " current student of Bangladesh University Of Engineering and Technology," +
-                    " as a side project. Few open source libraries (especially a filechooser library) were used to build this application.");
+                    " as a side project. Few open source libraries (especially a filechooser library) were used to build this application." +
+                    "Now while we're at it, the naming credit goes to none other than Akib Ahmed (1305074) aka Akibbai" +
+                    "Thanks to him, this application has been given a nice name.");
 
             builder1.setPositiveButton(
                     "OK",
@@ -79,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     });
             builder1.setCancelable(false);
             AlertDialog alert11 = builder1.create();
-            alert11.show();
-        }
+            alert11.show();        }
 
 
         return super.onOptionsItemSelected(item);

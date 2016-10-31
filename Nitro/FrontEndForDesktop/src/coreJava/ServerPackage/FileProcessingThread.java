@@ -18,8 +18,8 @@ import java.util.logging.SimpleFormatter;
  **/
 public class FileProcessingThread implements Runnable {
     //buffer related
-    private int NETWORK_BUFFER_SIZE=12000;
-    private int FILE_BUFFER_SIZE=36000;
+    private int NETWORK_BUFFER_SIZE=8192;
+    private int FILE_BUFFER_SIZE=8192;
 
     //server & network related
     private NetworkUtil util=null;
@@ -39,6 +39,7 @@ public class FileProcessingThread implements Runnable {
     private boolean stop;
     private long totalreceived;
     private long startTime;
+    private boolean error;
 
     private static Logger logger=null;
     private void ConfigLog()
@@ -133,6 +134,7 @@ public class FileProcessingThread implements Runnable {
                             f.delete();
                             if(totalRead==-1){
                                 logger.info("Connection disconnected by sender");
+                                error=true;
                                 //TODO gui
                                 controller.regenerateServer();
                                 controller.clearVisualEffect();
@@ -141,6 +143,7 @@ public class FileProcessingThread implements Runnable {
                             }
                             else if(stop){
                                 //TODo gui
+                                error=true;
                                 logger.log(Level.WARNING,"Connection disconnected by receiver");
                                 controller.clearVisualEffect();
                                 controller.showMessage("Receiving stopped","Did you stopped the server?", Alert.AlertType.WARNING);
@@ -164,18 +167,22 @@ public class FileProcessingThread implements Runnable {
         } catch (IOException e) {
             logger.log(Level.SEVERE,"Exception in serverpackage.FileProcessingThread ",e.getMessage());
         }
+        if(!error){
+            double dd=(double) totalreceived /(1024*1024);
+            double tt=(double)(System.currentTimeMillis()-startTime)/1000;
+            controller.showMessage("SUCCESS!!","You received "+new DecimalFormat("#0.00").format(dd)+" in "+tt+" second(s) from "+util.getSocket().getInetAddress().getHostName(), Alert.AlertType.INFORMATION);
+            logger.log(Level.INFO,"Successfully received "+dd+" MB in "+dd+" second(s)\nSession ended");
+        }
         controller.regenerateServer();
     }
 
 
     @Override
     public void run() {
+        error=false;
         this.receiveAndProcess();
         util.closeAll();
-        double dd=(double) totalreceived /(1024*1024);
-        double tt=(double)(System.currentTimeMillis()-startTime)/1000;
-        controller.showMessage("SUCCESS!!","You received "+new DecimalFormat("#0.00").format(dd)+" in "+tt+" second(s) from "+util.getSocket().getInetAddress().getHostName(), Alert.AlertType.INFORMATION);
-        logger.log(Level.INFO,"Successfully received "+dd+" MB in "+dd+" second(s)\nSession ended");
+
     }
 
     private void getFileNameAndSize(byte[] buff,int totalRead) {

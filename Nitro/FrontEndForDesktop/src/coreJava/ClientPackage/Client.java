@@ -18,8 +18,8 @@ import java.util.logging.SimpleFormatter;
  **/
 public class Client implements Runnable {
     //buffer related
-    private int DEFAULT_BUFFER_SIZE=12000;
-    private int BUFFER_SIZE=36000;
+    private int DEFAULT_BUFFER_SIZE=8192;
+    private int BUFFER_SIZE=8192;
 
     //server & network related
     private int port=46043;

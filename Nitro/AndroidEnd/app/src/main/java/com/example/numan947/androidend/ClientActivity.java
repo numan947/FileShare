@@ -128,7 +128,6 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        isSending=false;
     }
     //TODO do this
     @Override
@@ -177,11 +176,9 @@ public class ClientActivity extends AppCompatActivity {
             return;
         }
 
-        if(client==null){
-            client=new Client(this,address,fileList);
-            changeStates();
-        }
-        isSending=true;
+
+        client=new Client(this,address,fileList);
+        changeStates();
 
     }
 
@@ -192,7 +189,6 @@ public class ClientActivity extends AppCompatActivity {
             client.setStop(true);
             client=null;
             changeStates();
-            isSending=false;
         }
         addressText.clearFocus();
 
@@ -208,6 +204,8 @@ public class ClientActivity extends AppCompatActivity {
         else selectButton.setEnabled(true);
         if(addressText.isEnabled())addressText.setEnabled(false);
         else addressText.setEnabled(true);
+        if(isSending)isSending=false;
+        else isSending=true;
     }
 
     public void setPrimaryVisualEffect( long done,long total)

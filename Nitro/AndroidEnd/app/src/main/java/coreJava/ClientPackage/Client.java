@@ -22,8 +22,8 @@ import java.util.logging.SimpleFormatter;
  **/
 public class Client implements Runnable {
     //buffer related
-    private int DEFAULT_BUFFER_SIZE=12000;
-    private int BUFFER_SIZE=36000;
+    private int DEFAULT_BUFFER_SIZE=8192;
+    private int BUFFER_SIZE=8192;
 
     //server & network related
     private int port=46043;
@@ -53,7 +53,7 @@ public class Client implements Runnable {
         logger=Logger.getLogger(Client.class.getName());
         FileHandler fh = null;
         try {
-            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG"+ File.separator+Client.class.getName()+"_logFile.log",true);
+            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"Trans"+File.separator+".LOG"+ File.separator+Client.class.getName()+"_logFile.log",true);
         } catch (IOException e) {
             e.printStackTrace();
         }
