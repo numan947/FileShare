@@ -23,30 +23,31 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:id="@+id/linearLayout"
-        android:layout_weight="1"
+        android:layout_weight="0.93"
         android:focusable="true"
         android:focusableInTouchMode="true">
 
         <TextView
-            android:text="Receiving: "
+            android:text="RCV: "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView4"
             android:padding="1dp"
             android:layout_margin="1dp"
-            android:layout_weight=".5"
             android:textColor="#FFFFFF"
             android:textSize="15.5sp"
             android:focusableInTouchMode="true"
             android:descendantFocusability="beforeDescendants"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:layout_gravity="center"/>
 
         <TextView
+            android:layout_gravity="center"
             android:text="File Name"
-            android:layout_width="wrap_content"
+            android:layout_weight="1.0"
             android:layout_height="wrap_content"
+            android:layout_width="0dp"
             android:id="@+id/current_file_name"
-            android:layout_weight="10"
             android:textColor="#FFFFFF"
             android:textSize="15.5sp"
             android:padding="1dp"
@@ -56,11 +57,11 @@
             android:focusable="true"/>
 
         <TextView
+            android:layout_gravity="center"
             android:text="Done"
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:id="@+id/done_name"
-            android:layout_weight="1"
             android:textAlignment="textEnd"
             android:textColor="#FFFFFF"
             android:textSize="15.5sp"
@@ -71,11 +72,11 @@
             android:focusable="true"/>
 
         <TextView
-            android:text="/total"
-            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:text="/ total"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:id="@+id/total_name"
-            android:layout_weight="1"
             android:textColor="#FFFFFF"
             android:textSize="15.5sp"
             android:padding="1dp"
@@ -89,10 +90,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/pbar"
-            android:layout_weight=".5"
             android:focusableInTouchMode="true"
             android:descendantFocusability="beforeDescendants"
-            android:focusable="true"/>
+            android:focusable="true"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 
@@ -110,12 +111,12 @@
         android:layout_weight="10"/>
 
     <TextView
+        android:text="YOUR ADDRESS"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:hint="Your Address"
         android:textStyle="bold"
         android:ems="10"
-        android:textSize="20sp"
+        android:textSize="35sp"
         android:paddingTop="10dp"
         android:id="@+id/address_server"
         android:layout_below="@+id/listView_server"
@@ -138,7 +139,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/start_server_btn"
             android:gravity="center"
-            android:background="#616161"
+            android:background="@drawable/button"
             android:layout_margin="5dp"
             android:onClick="startServer"/>
 
@@ -148,7 +149,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/stop_server_btn"
-            android:background="#616161"
+            android:background="@drawable/button"
             android:layout_margin="5dp"
             android:onClick="stopServer"/>
 
@@ -157,7 +158,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/clear_button"
-            android:background="#616161"
+            android:background="@drawable/button"
             android:layout_margin="5dp"
             android:onClick="clearList"/>
 

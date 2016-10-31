@@ -1,22 +1,36 @@
 package com.example.numan947.androidend;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        File logDir=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG");
+        if(!logDir.exists())logDir.mkdirs();
     }
 
     @Override
@@ -34,9 +48,40 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        if (id == R.id.save_path) {
+
+            builder1.setTitle("Save Path");
+            builder1.setMessage("Your received files are saved at "+Environment.getExternalStorageDirectory().getAbsolutePath());
+
+            builder1.setPositiveButton(
+                    "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            builder1.setCancelable(false);
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+        }else if(id==R.id.about){
+            builder1.setTitle("About This App");
+            builder1.setMessage("This application is prepared by S.Mahmudul Hasan, Roll: 1305043," +
+                    " current student of Bangladesh University Of Engineering and Technology," +
+                    " as a side project. Few open source libraries (especially a filechooser library) were used to build this application.");
+
+            builder1.setPositiveButton(
+                    "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            builder1.setCancelable(false);
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
         }
+
 
         return super.onOptionsItemSelected(item);
     }

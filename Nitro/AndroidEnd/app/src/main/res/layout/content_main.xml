@@ -16,7 +16,7 @@
 
     <Button
         android:text="Receive"
-        android:background="#616161"
+        android:background="@drawable/button"
         android:textSize="20sp"
         android:textColor="#4527a0"
         android:textAlignment="center"
@@ -30,7 +30,7 @@
 
     <Button
         android:text="Send"
-        android:background="#616161"
+        android:background="@drawable/button"
         android:textSize="20sp"
         android:textColor="#4527a0"
         android:textAlignment="center"

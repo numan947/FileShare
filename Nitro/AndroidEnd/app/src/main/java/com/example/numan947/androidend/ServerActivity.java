@@ -1,19 +1,26 @@
 package com.example.numan947.androidend;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import coreJava.ServerPackage.Server;
 
@@ -24,6 +31,7 @@ public class ServerActivity extends AppCompatActivity {
     private ArrayList<File>fileList=null;
     private MyAdapter adapter=null;
     private String defaultDir=null;
+    private String ipAddress=null;
 
     //layout
     private TextView fileNameView=null;
@@ -39,6 +47,10 @@ public class ServerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_server);
 
         //load from xml
@@ -58,15 +70,17 @@ public class ServerActivity extends AppCompatActivity {
 
         fileList=new ArrayList<>();
         adapter=new MyAdapter(getBaseContext(),fileList);
-        listView.setAdapter(adapter); 
+        listView.setAdapter(adapter);
 
         stopButton.setEnabled(false);
 
-        File m=getBaseContext().getDir("NUMAN947", Context.MODE_PRIVATE);
-        if(m.exists())m.delete();
-        //this.defaultDir=m.getAbsolutePath();
-        //Log.d("MYTAG","HERE "+m.exists()+" " +defaultDir);
-        //Log.d("MYTAG","HERE "+m.exists()+" " + Environment.getExternalStorageDirectory().getAbsolutePath());
+        //todo change this
+        this.defaultDir= Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"THIS IS SPARTA";
+        File file=new File(defaultDir);
+        if(!file.exists())file.mkdirs();
+
+        clearVisualEffect();
+
 
 
     }
@@ -74,6 +88,12 @@ public class ServerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if(isReceiving &&server!=null){
+            addressView.setText("YOUR ADDRESS");
+            server.shutdownServer();
+            changeStates();
+            server=null;
+        }
     }
 
     @Override
@@ -87,10 +107,23 @@ public class ServerActivity extends AppCompatActivity {
     }
 
     public void stopServer(View view) {
+        if(server!=null) {
+            addressView.setText("YOUR ADDRESS");
+            server.shutdownServer();
+            changeStates();
+            server=null;
+        }
     }
 
     public void startServer(View view) {
-       // server=new Server(this,)
+
+        findIP();
+        addressView.setText(ipAddress);
+        if(ipAddress.equals("NO_NETWORK"))return;
+
+        isReceiving=true;
+        server=new Server(this,defaultDir);
+        changeStates();
     }
 
 
@@ -133,7 +166,8 @@ public class ServerActivity extends AppCompatActivity {
     }
 
 
-    public void updateList() {
+    public void updateList(File f) {
+        if(f!=null)this.fileList.add(f);
         adapter.notifyDataSetChanged();
     }
 
@@ -157,4 +191,46 @@ public class ServerActivity extends AppCompatActivity {
         AlertDialog alert11 = builder1.create();
         alert11.show();
     }
+
+    private void findIP()
+    {
+        Vector<String> addresses=new Vector<>();
+        try {
+            Enumeration<NetworkInterface> n=NetworkInterface.getNetworkInterfaces();
+            while(n.hasMoreElements()){
+                NetworkInterface e=n.nextElement();
+
+                Enumeration<InetAddress>a=e.getInetAddresses();
+
+                while (a.hasMoreElements()){
+                    addresses.add(a.nextElement().getHostAddress());
+                }
+            }
+        } catch (SocketException e) {
+            //todo logger.log(Level.WARNING,"Problem in NetworkInterfaces "+new Date().toString());
+        }
+        this.ipAddress="NO_NETWORK";
+
+        for(String s:addresses){
+
+            if(s.matches("10\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])")){
+                this.ipAddress=s;
+                break;
+            }
+            else if(s.matches("192.168\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])")){
+                this.ipAddress=s;
+                break;
+            }
+            else if(s.matches("172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])")){
+                this.ipAddress=s;
+                break;
+            }
+        }
+    }
+
+    public void regenerateServer()
+    {
+        server=new Server(this,defaultDir);
+    }
+
 }

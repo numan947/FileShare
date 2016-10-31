@@ -11,6 +11,8 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -47,8 +49,14 @@ public class ClientActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_client);
-        fileList=new ArrayList<>();
+
+
+
         listView=(ListView)findViewById(R.id.listView_client);
         addressText=(EditText)findViewById(R.id.address);
         fileNameView=(TextView)findViewById(R.id.current_file_name);
@@ -64,7 +72,7 @@ public class ClientActivity extends AppCompatActivity {
         clearVisualEffect();
         pbar.setMax(100);
         isSending=false;
-
+        fileList=new ArrayList<>();
         adapter=new MyAdapter(getBaseContext(),fileList);
         initiateListView();
     }
@@ -108,7 +116,6 @@ public class ClientActivity extends AppCompatActivity {
         registerForContextMenu(listView);
     }
 
-    //TODO do this
     @Override
     protected void onPause() {
         super.onPause();
@@ -118,7 +125,6 @@ public class ClientActivity extends AppCompatActivity {
             changeStates();
         }
     }
-    //TODO do this
     @Override
     protected void onResume() {
         super.onResume();

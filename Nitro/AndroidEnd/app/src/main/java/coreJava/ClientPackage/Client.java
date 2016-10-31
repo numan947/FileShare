@@ -1,5 +1,7 @@
 package coreJava.ClientPackage;
 
+import android.os.Environment;
+
 import com.example.numan947.androidend.ClientActivity;
 
 import java.io.BufferedInputStream;
@@ -10,8 +12,10 @@ import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Created by numan947 on 10/26/16.
@@ -47,10 +51,15 @@ public class Client implements Runnable {
     private void ConfigLog()
     {
         logger=Logger.getLogger(Client.class.getName());
-//            FileHandler fh=new FileHandler(Main.loggerDir+File.separator+Client.class.getName()+"_logFile.log",true);
-//            SimpleFormatter formatter=new SimpleFormatter();
-//            fh.setFormatter(formatter);
-//            logger.addHandler(fh);
+        FileHandler fh = null;
+        try {
+            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG"+ File.separator+Client.class.getName()+"_logFile.log",true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SimpleFormatter formatter=new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.addHandler(fh);
     }
 
 

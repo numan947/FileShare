@@ -1,5 +1,7 @@
 package coreJava.ServerPackage;
 
+import android.os.Environment;
+
 import com.example.numan947.androidend.ServerActivity;
 
 import java.io.BufferedOutputStream;
@@ -8,9 +10,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 /**
@@ -23,6 +28,7 @@ public class FileProcessingThread implements Runnable {
 
     //server & network related
     private NetworkUtil util=null;
+    private  boolean errorFlag;
 
     //file transfer related
     private String DEFAULT_SAVE_FILE_PATH=null;
@@ -32,6 +38,7 @@ public class FileProcessingThread implements Runnable {
     private byte[]buff=null;
     private char separator=File.separatorChar;
     private String encoding="UTF-8";
+    private File f;
 
 
     //gui related
@@ -39,15 +46,21 @@ public class FileProcessingThread implements Runnable {
     private boolean stop;
     private long totalreceived;
     private long startTime;
+    int cnt;
 
     private static Logger logger=null;
     private void ConfigLog()
     {
-        logger=Logger.getLogger(FileProcessingThread.class.getName());
-//            FileHandler fh=new FileHandler(Main.loggerDir+File.separator+FileProcessingThread.class.getName()+"_logFile.log",true);
-//            SimpleFormatter formatter=new SimpleFormatter();
-//            fh.setFormatter(formatter);
-//            logger.addHandler(fh);
+            logger=Logger.getLogger(FileProcessingThread.class.getName());
+        FileHandler fh = null;
+        try {
+            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG"+ File.separator+FileProcessingThread.class.getName()+"_logFile.log",true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SimpleFormatter formatter=new SimpleFormatter();
+            fh.setFormatter(formatter);
+            logger.addHandler(fh);
     }
 
 
@@ -58,7 +71,7 @@ public class FileProcessingThread implements Runnable {
         this.DEFAULT_SAVE_FILE_PATH=DEFAULT_SAVE_FILE_PATH;
         this.util=new NetworkUtil(accept);
         this.buff=new byte[NETWORK_BUFFER_SIZE];
-        this.stop=false;
+        this.stop=false;errorFlag=false;
         Thread thread = new Thread(this);
         thread.start();
     }
@@ -91,12 +104,12 @@ public class FileProcessingThread implements Runnable {
                 util.writeBuff(("Will receive " + totalFiles + " file(s)").getBytes(encoding));
                 for (int i = 0; i < totalFiles; i++) {
                     totalRead = util.readBuff(buff);
-                    int cnt = 0;
+                    cnt = 0;
                     if(totalRead!=-1) {
                         getFileNameAndSize(buff, totalRead);
                         totalreceived +=fileSize;
                         util.writeBuff(("received name " + fileName + " " + fileSize).getBytes(encoding));
-                        File f=new File(DEFAULT_SAVE_FILE_PATH + separator + fileName);
+                        f=new File(DEFAULT_SAVE_FILE_PATH + separator + fileName);
                         int exist=1;
                         if(f.exists()) {
                             while (f.exists())
@@ -106,8 +119,14 @@ public class FileProcessingThread implements Runnable {
                             }
                         }
                         fbuff = new BufferedOutputStream(new FileOutputStream(f),FILE_BUFFER_SIZE);
-                        //fixme gui update
-                        //TODO controller.setSecondaryVisualEffect(fileName,fileSize);
+
+
+                        controller.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                controller.setSecondaryVisualEffect(fileName,fileSize);
+                            }
+                        });
 
                         while (!stop) {
                             if (cnt >= fileSize||totalRead==-1) break;
@@ -115,8 +134,12 @@ public class FileProcessingThread implements Runnable {
                             if(totalRead!=-1) {
                                 cnt += totalRead;
                                 writeToFile(buff, totalRead, cnt);
-                                //fixme gui
-                                //TODO controller.setPrimaryVisualEffect(cnt, fileSize);
+                                controller.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        controller.setPrimaryVisualEffect(cnt, fileSize);
+                                    }
+                                });
                             }
                             //System.out.println(fileSize + "  " + totalRead);
                         }
@@ -129,25 +152,42 @@ public class FileProcessingThread implements Runnable {
                             f.delete();
                             if(totalRead==-1){
                                 logger.info("Connection disconnected by sender");
-                                //TODO gui
-                                //TODO controller.regenerateServer();
-                                //TODO controller.clearVisualEffect();
-                                //TODO controller.showMessage("ERROR!!","Problem while receiving"+ f.getName()+" sender disconnected the connection", Alert.AlertType.ERROR);
+                                errorFlag=true;
+                                controller.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        controller.regenerateServer();
+                                        controller.clearVisualEffect();
+                                        controller.showMessage("ERROR!!","Problem while receiving"+ f.getName()+" sender disconnected the connection");
+                                    }
+                                });
                                 return;
                             }
                             else if(stop){
-                                //TODo gui
+
                                 logger.log(Level.WARNING,"Connection disconnected by receiver");
-                                //TODO controller.clearVisualEffect();
-                                //TODO controller.showMessage("Receiving stopped","Did you stopped the server?", Alert.AlertType.WARNING);
+                                errorFlag=true;
+                                controller.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        controller.clearVisualEffect();
+                                        controller.showMessage("Receiving stopped","Did you stopped the server?");
+                                    }
+                                });
                                 return;
                             }
                         }
 
 
                         //TODO ui update
-                        //TOdo controller.clearVisualEffect();
-                        //TODO controller.updateFileList(f);
+                        controller.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                controller.clearVisualEffect();
+                                controller.updateList(f);
+                            }
+                        });
+
                     }else{
                         logger.log(Level.WARNING,"Problem while transferring file..probably file's become corrupted ");
                         corrupted =true;
@@ -160,7 +200,7 @@ public class FileProcessingThread implements Runnable {
         } catch (IOException e) {
             logger.log(Level.SEVERE,"Exception in serverpackage.FileProcessingThread ",e.getMessage());
         }
-        //TODO controller.regenerateServer();
+        controller.regenerateServer();
     }
 
 
@@ -168,9 +208,18 @@ public class FileProcessingThread implements Runnable {
     public void run() {
         this.receiveAndProcess();
         util.closeAll();
-        double dd=(double) totalreceived /(1024*1024);
-        double tt=(double)(System.currentTimeMillis()-startTime)/1000;
-        //TODO controller.showMessage("SUCCESS!!","You received "+new DecimalFormat("#0.00").format(dd)+" in "+tt+" second(s) from "+util.getSocket().getInetAddress().getHostName(), Alert.AlertType.INFORMATION);
+        if(errorFlag)return;
+
+        final double dd=(double) totalreceived /(1024*1024);
+        final double tt=(double)(System.currentTimeMillis()-startTime)/1000;
+        final String host=util.getSocket().getInetAddress().getHostName();
+        controller.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                controller.showMessage("SUCCESS!!","You received "+new DecimalFormat("#0.00").format(dd)+" in "+tt+" second(s) from "+host);
+            }
+        });
+
         logger.log(Level.INFO,"Successfully received "+dd+" MB in "+dd+" second(s)\nSession ended");
     }
 

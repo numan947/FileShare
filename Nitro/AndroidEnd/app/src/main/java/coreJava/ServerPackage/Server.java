@@ -1,13 +1,18 @@
 package coreJava.ServerPackage;
 
+import android.os.Environment;
+
 import com.example.numan947.androidend.ServerActivity;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 /**
@@ -27,26 +32,37 @@ public class Server implements Runnable{
     private void ConfigLog()
     {
         logger=Logger.getLogger(Server.class.getName());
-//            FileHandler fh=new FileHandler(Main.loggerDir+ File.separator+Server.class.getName()+"_logFile.log",true);
-//            SimpleFormatter formatter=new SimpleFormatter();
-//            fh.setFormatter(formatter);
-//            logger.addHandler(fh);
+        FileHandler fh= null;
+        try {
+            fh = new FileHandler(Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"THIS IS SPARTA"+File.separator+".LOG"+ File.separator+Server.class.getName()+"_logFile.log",true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SimpleFormatter formatter=new SimpleFormatter();
+        fh.setFormatter(formatter);
+        logger.addHandler(fh);
     }
 
 
 
-    public Server(ServerActivity controller, String savePath) {
+    public Server(ServerActivity controller1, String savePath) {
         try {
             this.ConfigLog();
-            this.controller=controller;
+            this.controller=controller1;
             this.savePath=savePath;
             this.serverSocket=new ServerSocket(port,1);
             this.thread=new Thread(this);
             thread.start();
         } catch (IOException e) {
-            //TODO controller.showMessage("Can't start Server!!", "Are you running another instance of this program?", Alert.AlertType.ERROR);
+            this.controller.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    controller.showMessage("Can't start Server!!", "Are you running another instance of this program?");
+                }
+            });
             logger.log(Level.SEVERE,"Problem while starting serverSocket!! Can't instantiate ServerSocket "+new Date().toString());
         }
+        logger.info("Server session started on "+new Date().toString());
     }
 
     public void startServer(){
