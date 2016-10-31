@@ -15,7 +15,7 @@
     tools:showIn="@layout/activity_main">
 
     <Button
-        android:text="@string/receive"
+        android:text="Receive"
         android:background="#616161"
         android:textSize="20sp"
         android:textColor="#4527a0"
@@ -29,7 +29,7 @@
         android:onClick="selectReceive"/>
 
     <Button
-        android:text="@string/send"
+        android:text="Send"
         android:background="#616161"
         android:textSize="20sp"
         android:textColor="#4527a0"
