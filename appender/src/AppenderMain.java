@@ -37,7 +37,7 @@ public class AppenderMain {
 
         setupHOME();
         if(args.length>2||args.length==0){
-            System.out.println("ARGUMENTS SIZE ISN'T RIGHT, run --help as arguments to get help");
+            System.out.println("ARGUMENTS SIZE ISN'T RIGHT, run --help as arguments to get help 1");
             return;
         }
 
@@ -60,7 +60,7 @@ public class AppenderMain {
                 System.out.println("OPEN FILE DIRECTORY: --dir");
             }
             else
-                System.out.println("ARGUMENTS SIZE ISN'T RIGHT, run --help as arguments to get help");
+                System.out.println("ARGUMENTS SIZE ISN'T RIGHT, run --help as arguments to get help 2");
             return;
         }
         //multi argument command
