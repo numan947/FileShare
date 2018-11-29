@@ -1,1 +1,2 @@
-Here I'll be uploading my practice projects and codes while learning from different sources
+TODO:
+1. Update the file explorer from the AndroidEnd of FileShare Application.
